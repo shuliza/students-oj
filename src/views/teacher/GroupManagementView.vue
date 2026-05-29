@@ -1,0 +1,219 @@
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { teacherApi } from '@/api'
+import type { ClassGroup, User } from '@/types'
+
+const groups = ref<ClassGroup[]>([])
+const loading = ref(false)
+
+// Create/Edit dialog
+const dialogVisible = ref(false)
+const dialogTitle = ref('新建分组')
+const editingId = ref<number | null>(null)
+const form = ref({ name: '', teacherName: '', description: '' })
+
+// Member drawer
+const memberDrawerVisible = ref(false)
+const memberGroupId = ref<number | null>(null)
+const memberGroupName = ref('')
+const members = ref<User[]>([])
+const memberLoading = ref(false)
+
+const fetchGroups = async () => {
+  loading.value = true
+  try {
+    groups.value = await teacherApi.groups()
+  } finally {
+    loading.value = false
+  }
+}
+
+const openCreateDialog = () => {
+  dialogTitle.value = '新建分组'
+  editingId.value = null
+  form.value = { name: '', teacherName: '', description: '' }
+  dialogVisible.value = true
+}
+
+const openEditDialog = (item: ClassGroup) => {
+  dialogTitle.value = '编辑分组'
+  editingId.value = item.id
+  form.value = { name: item.name, teacherName: item.teacherName, description: item.description }
+  dialogVisible.value = true
+}
+
+const submitGroup = async () => {
+  if (!form.value.name.trim()) {
+    ElMessage.warning('请输入分组名称')
+    return
+  }
+  try {
+    if (editingId.value) {
+      await teacherApi.updateGroup(editingId.value, form.value)
+      ElMessage.success('分组已更新')
+    } else {
+      await teacherApi.createGroup(form.value)
+      ElMessage.success('分组已创建')
+    }
+    dialogVisible.value = false
+    await fetchGroups()
+  } catch {
+    ElMessage.error('操作失败')
+  }
+}
+
+const deleteGroup = async (item: ClassGroup) => {
+  try {
+    await ElMessageBox.confirm(`确认删除分组「${item.name}」？该分组内的学生将被移出。`, '删除确认', { type: 'warning' })
+    await teacherApi.deleteGroup(item.id)
+    ElMessage.success('分组已删除')
+    await fetchGroups()
+  } catch {}
+}
+
+const openMemberDrawer = async (item: ClassGroup) => {
+  memberGroupId.value = item.id
+  memberGroupName.value = item.name
+  memberDrawerVisible.value = true
+  await fetchMembers()
+}
+
+const fetchMembers = async () => {
+  if (!memberGroupId.value) return
+  memberLoading.value = true
+  try {
+    members.value = await teacherApi.getGroupMembers(memberGroupId.value)
+  } finally {
+    memberLoading.value = false
+  }
+}
+
+const removeMember = async (student: User) => {
+  try {
+    await ElMessageBox.confirm(`确认将「${student.realName}」移出分组？`, '移出确认', { type: 'warning' })
+    await teacherApi.removeGroupMembers(memberGroupId.value!, [student.id])
+    ElMessage.success('已移出')
+    await fetchMembers()
+    await fetchGroups()
+  } catch {}
+}
+
+const handleMemberExport = async () => {
+  if (!memberGroupId.value) return
+  try {
+    const blob = await teacherApi.exportGroupMembers(memberGroupId.value)
+    downloadBlob(blob, `${memberGroupName.value}-成员.xlsx`)
+  } catch {
+    ElMessage.error('导出失败')
+  }
+}
+
+const handleMemberImport = async () => {
+  if (!memberGroupId.value) return
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = '.xlsx,.xls,.csv'
+  input.onchange = async () => {
+    const file = input.files?.[0]
+    if (!file) return
+    try {
+      await teacherApi.importGroupMembers(memberGroupId.value!, file)
+      ElMessage.success('导入成功')
+      await fetchMembers()
+      await fetchGroups()
+    } catch {
+      ElMessage.error('导入失败')
+    }
+  }
+  input.click()
+}
+
+const downloadBlob = (blob: Blob, filename: string) => {
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+onMounted(fetchGroups)
+</script>
+
+<template>
+  <div class="page">
+    <div class="toolbar">
+      <div>
+        <h1 class="page-title">学生分组</h1>
+        <p class="page-subtitle">按班级、实验批次或专项练习组织学生。</p>
+      </div>
+      <el-button type="primary" @click="openCreateDialog">新建分组</el-button>
+    </div>
+    <div class="grid-2">
+      <el-card v-for="item in groups" :key="item.id" class="section-card" v-loading="loading">
+        <div class="toolbar">
+          <h2 class="card-title">{{ item.name }}</h2>
+          <el-tag>{{ item.studentCount }} 人</el-tag>
+        </div>
+        <p class="muted">{{ item.description }}</p>
+        <el-divider />
+        <div class="toolbar">
+          <span>负责教师：{{ item.teacherName }}</span>
+          <div>
+            <el-button type="primary" link @click="openMemberDrawer(item)">成员</el-button>
+            <el-button type="primary" link @click="openEditDialog(item)">编辑</el-button>
+            <el-button type="danger" link @click="deleteGroup(item)">删除</el-button>
+          </div>
+        </div>
+      </el-card>
+    </div>
+
+    <!-- Create/Edit Dialog -->
+    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="480px" destroy-on-close>
+      <el-form :model="form" label-width="90px">
+        <el-form-item label="分组名称" required>
+          <el-input v-model="form.name" placeholder="请输入分组名称" />
+        </el-form-item>
+        <el-form-item label="负责教师">
+          <el-input v-model="form.teacherName" placeholder="请输入负责教师姓名" />
+        </el-form-item>
+        <el-form-item label="描述">
+          <el-input v-model="form.description" type="textarea" :rows="3" placeholder="分组描述（可选）" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitGroup">确定</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- Member Drawer -->
+    <el-drawer v-model="memberDrawerVisible" :title="`${memberGroupName} - 分组成员`" size="600px" destroy-on-close>
+      <template #header>
+        <div class="toolbar" style="width: 100%">
+          <span style="font-size: 18px; font-weight: 700">{{ memberGroupName }} - 分组成员</span>
+          <div>
+            <el-button size="small" @click="handleMemberExport">导出成员</el-button>
+            <el-button size="small" type="primary" @click="handleMemberImport">导入成员</el-button>
+          </div>
+        </div>
+      </template>
+      <el-table :data="members" v-loading="memberLoading" stripe>
+        <el-table-column prop="studentNo" label="学号" width="120" />
+        <el-table-column prop="realName" label="姓名" width="100" />
+        <el-table-column prop="username" label="账号" />
+        <el-table-column prop="status" label="状态" width="90">
+          <template #default="{ row }">
+            <el-tag :type="row.status === 'ACTIVE' ? 'success' : 'info'" size="small">{{ row.status }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="80">
+          <template #default="{ row }">
+            <el-button type="danger" link size="small" @click="removeMember(row)">移出</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-drawer>
+  </div>
+</template>

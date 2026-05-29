@@ -1,0 +1,208 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: student_oj
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./deploy/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_ai_ci"]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  redis:
+    image: redis:7.4-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  auth-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: auth-service
+    environment: &backend-env
+      MYSQL_HOST: mysql
+      MYSQL_PORT: "3306"
+      MYSQL_DATABASE: student_oj
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: root
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_USERNAME: guest
+      RABBITMQ_PASSWORD: guest
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+
+  problem-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: problem-service
+    environment:
+      <<: *backend-env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8082:8082"
+
+  judge-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: judge-service
+    environment:
+      <<: *backend-env
+      SANDBOX_BASE_URL: http://sandbox-service:8084
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      sandbox-service:
+        condition: service_started
+    ports:
+      - "8083:8083"
+
+  sandbox-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: sandbox-service
+    environment:
+      <<: *backend-env
+      SANDBOX_MYSQL_DATABASE: student_oj_sandbox
+      SANDBOX_MYSQL_USERNAME: sandbox
+      SANDBOX_MYSQL_PASSWORD: sandbox123
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8084:8084"
+
+  ai-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: ai-service
+    environment:
+      <<: *backend-env
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      STUDENTOJ_AI_MODE: rule
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8085:8085"
+
+  statistics-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: statistics-service
+    environment:
+      <<: *backend-env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8086:8086"
+
+  teacher-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: teacher-service
+    environment:
+      <<: *backend-env
+    depends_on:
+      mysql:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8087:8087"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - auth-service
+      - problem-service
+      - judge-service
+      - sandbox-service
+      - ai-service
+      - statistics-service
+      - teacher-service
+    ports:
+      - "80:80"
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    volumes:
+      - ./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:11.2.2
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./deploy/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
+volumes:
+  mysql-data:

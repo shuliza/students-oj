@@ -1,0 +1,4328 @@
+[
+  {
+    "id": 175,
+    "title": "组合两个表",
+    "titleSlug": "combine-two-tables",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.74,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 176,
+    "title": "第二高的薪水",
+    "titleSlug": "second-highest-salary",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.39,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 177,
+    "title": "第N高的薪水",
+    "titleSlug": "nth-highest-salary",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.46,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 178,
+    "title": "分数排名",
+    "titleSlug": "rank-scores",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.64,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 180,
+    "title": "连续出现的数字",
+    "titleSlug": "consecutive-numbers",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.46,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 181,
+    "title": "超过经理收入的员工",
+    "titleSlug": "employees-earning-more-than-their-managers",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.69,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 182,
+    "title": "查找重复的电子邮箱",
+    "titleSlug": "duplicate-emails",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.78,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 183,
+    "title": "从不订购的客户",
+    "titleSlug": "customers-who-never-order",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.67,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 184,
+    "title": "部门工资最高的员工",
+    "titleSlug": "department-highest-salary",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.54,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 185,
+    "title": "部门工资前三高的所有员工",
+    "titleSlug": "department-top-three-salaries",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.57,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 196,
+    "title": "删除重复的电子邮箱",
+    "titleSlug": "delete-duplicate-emails",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.67,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 197,
+    "title": "上升的温度",
+    "titleSlug": "rising-temperature",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.54,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 262,
+    "title": "行程和用户",
+    "titleSlug": "trips-and-users",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.41,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 511,
+    "title": "游戏玩法分析 I",
+    "titleSlug": "game-play-analysis-i",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.71,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 512,
+    "title": "游戏玩法分析 II",
+    "titleSlug": "game-play-analysis-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.55,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 534,
+    "title": "游戏玩法分析 III",
+    "titleSlug": "game-play-analysis-iii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.71,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 550,
+    "title": "游戏玩法分析 IV",
+    "titleSlug": "game-play-analysis-iv",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.43,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 569,
+    "title": "员工薪水中位数",
+    "titleSlug": "median-employee-salary",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.58,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 570,
+    "title": "至少有5名直接下属的经理",
+    "titleSlug": "managers-with-at-least-5-direct-reports",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.52,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 571,
+    "title": "给定数字的频率查询中位数",
+    "titleSlug": "find-median-given-frequency-of-numbers",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.46,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 574,
+    "title": "当选者",
+    "titleSlug": "winning-candidate",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.66,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 577,
+    "title": "员工奖金",
+    "titleSlug": "employee-bonus",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.7,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 578,
+    "title": "查询回答率最高的问题",
+    "titleSlug": "get-highest-answer-rate-question",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.42,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 579,
+    "title": "查询员工的累计薪水",
+    "titleSlug": "find-cumulative-salary-of-an-employee",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.47,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 580,
+    "title": "统计各专业学生人数",
+    "titleSlug": "count-student-number-in-departments",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.54,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 584,
+    "title": "寻找用户推荐人",
+    "titleSlug": "find-customer-referee",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.68,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 585,
+    "title": "2016年的投资",
+    "titleSlug": "investments-in-2016",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.48,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 586,
+    "title": "订单最多的客户",
+    "titleSlug": "customer-placing-the-largest-number-of-orders",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.66,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 595,
+    "title": "大的国家",
+    "titleSlug": "big-countries",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.67,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 596,
+    "title": "超过 5 名学生的课",
+    "titleSlug": "classes-with-at-least-5-students",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.59,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 597,
+    "title": "好友申请 I：总体通过率",
+    "titleSlug": "friend-requests-i-overall-acceptance-rate",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.43,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 601,
+    "title": "体育馆的人流量",
+    "titleSlug": "human-traffic-of-stadium",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.5,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 602,
+    "title": "好友申请 II ：谁有最多的好友",
+    "titleSlug": "friend-requests-ii-who-has-the-most-friends",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.63,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 603,
+    "title": "连续空余座位",
+    "titleSlug": "consecutive-available-seats",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.62,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 607,
+    "title": "销售员",
+    "titleSlug": "sales-person",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.65,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 608,
+    "title": "树节点",
+    "titleSlug": "tree-node",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.65,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 610,
+    "title": "判断三角形",
+    "titleSlug": "triangle-judgement",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.73,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 612,
+    "title": "平面上的最近距离",
+    "titleSlug": "shortest-distance-in-a-plane",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.63,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 613,
+    "title": "直线上的最近距离",
+    "titleSlug": "shortest-distance-in-a-line",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.79,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 614,
+    "title": "二级关注者",
+    "titleSlug": "second-degree-follower",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.39,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 615,
+    "title": "平均工资：部门与公司比较",
+    "titleSlug": "average-salary-departments-vs-company",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.45,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 618,
+    "title": "学生地理信息报告",
+    "titleSlug": "students-report-by-geography",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.62,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 619,
+    "title": "只出现一次的最大数字",
+    "titleSlug": "biggest-single-number",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.6,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 620,
+    "title": "有趣的电影",
+    "titleSlug": "not-boring-movies",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.78,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 626,
+    "title": "换座位",
+    "titleSlug": "exchange-seats",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.71,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 627,
+    "title": "变更性别",
+    "titleSlug": "swap-sex-of-employees",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.83,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1045,
+    "title": "买下所有产品的客户",
+    "titleSlug": "customers-who-bought-all-products",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.6,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1050,
+    "title": "合作过至少三次的演员和导演",
+    "titleSlug": "actors-and-directors-who-cooperated-at-least-three-times",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.76,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1068,
+    "title": "产品销售分析 I",
+    "titleSlug": "product-sales-analysis-i",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.86,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1069,
+    "title": "产品销售分析 II",
+    "titleSlug": "product-sales-analysis-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.82,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1070,
+    "title": "产品销售分析 III",
+    "titleSlug": "product-sales-analysis-iii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.47,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1075,
+    "title": "项目员工 I",
+    "titleSlug": "project-employees-i",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.65,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1076,
+    "title": "项目员工II",
+    "titleSlug": "project-employees-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.5,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1077,
+    "title": "项目员工 III",
+    "titleSlug": "project-employees-iii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.72,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1082,
+    "title": "销售分析 I ",
+    "titleSlug": "sales-analysis-i",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.76,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1083,
+    "title": "销售分析 II",
+    "titleSlug": "sales-analysis-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.53,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1084,
+    "title": "销售分析 III",
+    "titleSlug": "sales-analysis-iii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.51,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1097,
+    "title": "游戏玩法分析 V",
+    "titleSlug": "game-play-analysis-v",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.51,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1098,
+    "title": "小众书籍",
+    "titleSlug": "unpopular-books",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.46,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1107,
+    "title": "每日新用户统计",
+    "titleSlug": "new-users-daily-count",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.4,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1112,
+    "title": "每位学生的最高成绩",
+    "titleSlug": "highest-grade-for-each-student",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.65,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1113,
+    "title": "报告的记录",
+    "titleSlug": "reported-posts",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.54,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1126,
+    "title": "查询活跃业务",
+    "titleSlug": "active-businesses",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.66,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1127,
+    "title": "用户购买平台",
+    "titleSlug": "user-purchase-platform",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.44,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1132,
+    "title": "报告的记录 II",
+    "titleSlug": "reported-posts-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.37,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1141,
+    "title": "查询近30天活跃用户数",
+    "titleSlug": "user-activity-for-the-past-30-days-i",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.46,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1142,
+    "title": "过去30天的用户活动 II",
+    "titleSlug": "user-activity-for-the-past-30-days-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.36,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1148,
+    "title": "文章浏览 I",
+    "titleSlug": "article-views-i",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.71,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1149,
+    "title": "文章浏览 II",
+    "titleSlug": "article-views-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.44,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1158,
+    "title": "市场分析 I",
+    "titleSlug": "market-analysis-i",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.54,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1159,
+    "title": "市场分析 II",
+    "titleSlug": "market-analysis-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.51,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1164,
+    "title": "指定日期的产品价格",
+    "titleSlug": "product-price-at-a-given-date",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.58,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1173,
+    "title": "即时食物配送 I",
+    "titleSlug": "immediate-food-delivery-i",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.76,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1174,
+    "title": "即时食物配送 II",
+    "titleSlug": "immediate-food-delivery-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.54,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1179,
+    "title": "重新格式化部门表",
+    "titleSlug": "reformat-department-table",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.67,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1193,
+    "title": "每月交易 I",
+    "titleSlug": "monthly-transactions-i",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.6,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1194,
+    "title": "锦标赛优胜者",
+    "titleSlug": "tournament-winners",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.52,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1204,
+    "title": "最后一个能进入巴士的人",
+    "titleSlug": "last-person-to-fit-in-the-bus",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.71,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1205,
+    "title": "每月交易 II",
+    "titleSlug": "monthly-transactions-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.44,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1211,
+    "title": "查询结果的质量和占比",
+    "titleSlug": "queries-quality-and-percentage",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.55,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1212,
+    "title": "查询球队积分",
+    "titleSlug": "team-scores-in-football-tournament",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.5,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1225,
+    "title": "报告系统状态的连续日期",
+    "titleSlug": "report-contiguous-dates",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.52,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1241,
+    "title": "每个帖子的评论数",
+    "titleSlug": "number-of-comments-per-post",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.6,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1251,
+    "title": "平均售价",
+    "titleSlug": "average-selling-price",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.37,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1264,
+    "title": "页面推荐",
+    "titleSlug": "page-recommendations",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.56,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1270,
+    "title": "向公司 CEO 汇报工作的所有人",
+    "titleSlug": "all-people-report-to-the-given-manager",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.78,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1280,
+    "title": "学生们参加各科测试的次数",
+    "titleSlug": "students-and-examinations",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.53,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1285,
+    "title": "找到连续区间的开始和结束数字",
+    "titleSlug": "find-the-start-and-end-number-of-continuous-ranges",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.78,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1294,
+    "title": "不同国家的天气类型",
+    "titleSlug": "weather-type-in-each-country",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.66,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1303,
+    "title": "求团队人数",
+    "titleSlug": "find-the-team-size",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.83,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1308,
+    "title": "不同性别每日分数总计",
+    "titleSlug": "running-total-for-different-genders",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.74,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1321,
+    "title": "餐馆营业额变化增长",
+    "titleSlug": "restaurant-growth",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.59,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1322,
+    "title": "广告效果",
+    "titleSlug": "ads-performance",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.6,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1327,
+    "title": "列出指定时间段内所有的下单产品",
+    "titleSlug": "list-the-products-ordered-in-a-period",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.69,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1336,
+    "title": "每次访问的交易次数",
+    "titleSlug": "number-of-transactions-per-visit",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.46,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1341,
+    "title": "电影评分",
+    "titleSlug": "movie-rating",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.38,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1350,
+    "title": "院系无效的学生",
+    "titleSlug": "students-with-invalid-departments",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.85,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1355,
+    "title": "活动参与者",
+    "titleSlug": "activity-participants",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.65,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1364,
+    "title": "顾客的可信联系人数量",
+    "titleSlug": "number-of-trusted-contacts-of-a-customer",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.67,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1369,
+    "title": "获取最近第二次的活动",
+    "titleSlug": "get-the-second-most-recent-activity",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.62,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1378,
+    "title": "使用唯一标识码替换员工ID",
+    "titleSlug": "replace-employee-id-with-the-unique-identifier",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.8,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1384,
+    "title": "按年度列出销售总额",
+    "titleSlug": "total-sales-amount-by-year",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.59,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1393,
+    "title": "股票的资本损益",
+    "titleSlug": "capital-gainloss",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.83,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1398,
+    "title": "购买了产品 A 和产品 B 却没有购买产品 C 的顾客",
+    "titleSlug": "customers-who-bought-products-a-and-b-but-not-c",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.66,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1407,
+    "title": "排名靠前的旅行者",
+    "titleSlug": "top-travellers",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.56,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1412,
+    "title": "查找成绩处于中游的学生",
+    "titleSlug": "find-the-quiet-students-in-all-exams",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.51,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1421,
+    "title": "净现值查询",
+    "titleSlug": "npv-queries",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.73,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1435,
+    "title": "制作会话柱状图",
+    "titleSlug": "create-a-session-bar-chart",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.66,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1440,
+    "title": "计算布尔表达式的值",
+    "titleSlug": "evaluate-boolean-expression",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.67,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1445,
+    "title": "苹果和桔子",
+    "titleSlug": "apples-oranges",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.81,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1454,
+    "title": "活跃用户",
+    "titleSlug": "active-users",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.38,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1459,
+    "title": "矩形面积",
+    "titleSlug": "rectangles-area",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.63,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1468,
+    "title": "计算税后工资",
+    "titleSlug": "calculate-salaries",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.66,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1479,
+    "title": "周内每天的销售情况",
+    "titleSlug": "sales-by-day-of-the-week",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.58,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1484,
+    "title": "按日期分组销售产品",
+    "titleSlug": "group-sold-products-by-the-date",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.71,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1495,
+    "title": "上月播放的儿童适宜电影",
+    "titleSlug": "friendly-movies-streamed-last-month",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.52,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1501,
+    "title": "可以放心投资的国家",
+    "titleSlug": "countries-you-can-safely-invest-in",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.55,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1511,
+    "title": "消费者下单频率",
+    "titleSlug": "customer-order-frequency",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.59,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1517,
+    "title": "查找拥有有效邮箱的用户",
+    "titleSlug": "find-users-with-valid-e-mails",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.44,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1527,
+    "title": "患某种疾病的患者",
+    "titleSlug": "patients-with-a-condition",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.46,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1532,
+    "title": "最近的三笔订单",
+    "titleSlug": "the-most-recent-three-orders",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.64,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1543,
+    "title": "产品名称格式修复",
+    "titleSlug": "fix-product-name-format",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.56,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1549,
+    "title": "每件商品的最新订单",
+    "titleSlug": "the-most-recent-orders-for-each-product",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.64,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1555,
+    "title": "银行账户概要",
+    "titleSlug": "bank-account-summary",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.47,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1565,
+    "title": "按月统计订单数与顾客数",
+    "titleSlug": "unique-orders-and-customers-per-month",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.76,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1571,
+    "title": "仓库经理",
+    "titleSlug": "warehouse-manager",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.79,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1581,
+    "title": "进店却未进行过交易的顾客",
+    "titleSlug": "customer-who-visited-but-did-not-make-any-transactions",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.65,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1587,
+    "title": "银行账户概要 II",
+    "titleSlug": "bank-account-summary-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.78,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1596,
+    "title": "每位顾客最经常订购的商品",
+    "titleSlug": "the-most-frequently-ordered-products-for-each-customer",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.7,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1607,
+    "title": "没有卖出的卖家",
+    "titleSlug": "sellers-with-no-sales",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.53,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1613,
+    "title": "找到遗失的ID",
+    "titleSlug": "find-the-missing-ids",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.73,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1623,
+    "title": "三人国家代表队",
+    "titleSlug": "all-valid-triplets-that-can-represent-a-country",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.78,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1633,
+    "title": "各赛事的用户注册率",
+    "titleSlug": "percentage-of-users-attended-a-contest",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.58,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1635,
+    "title": "Hopper 公司查询 I",
+    "titleSlug": "hopper-company-queries-i",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.49,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1645,
+    "title": "Hopper 公司查询 II",
+    "titleSlug": "hopper-company-queries-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.41,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1651,
+    "title": "Hopper 公司查询 III",
+    "titleSlug": "hopper-company-queries-iii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.64,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1661,
+    "title": "每台机器的进程平均运行时间",
+    "titleSlug": "average-time-of-process-per-machine",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.7,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1667,
+    "title": "修复表中的名字",
+    "titleSlug": "fix-names-in-a-table",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.62,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1677,
+    "title": "发票中的产品金额",
+    "titleSlug": "products-worth-over-invoices",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.36,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1683,
+    "title": "无效的推文",
+    "titleSlug": "invalid-tweets",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.83,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1693,
+    "title": "每天的领导和合伙人",
+    "titleSlug": "daily-leads-and-partners",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.83,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1699,
+    "title": "两人之间的通话次数",
+    "titleSlug": "number-of-calls-between-two-persons",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.76,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1709,
+    "title": "访问日期之间最大的空档期",
+    "titleSlug": "biggest-window-between-visits",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.65,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1715,
+    "title": "苹果和橘子的个数",
+    "titleSlug": "count-apples-and-oranges",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.72,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1729,
+    "title": "求关注者的数量",
+    "titleSlug": "find-followers-count",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.59,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1731,
+    "title": "每位经理的下属员工数量",
+    "titleSlug": "the-number-of-employees-which-report-to-each-employee",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.51,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1741,
+    "title": "查找每个员工花费的总时间",
+    "titleSlug": "find-total-time-spent-by-each-employee",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.84,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1747,
+    "title": "应该被禁止的 Leetflex 账户",
+    "titleSlug": "leetflex-banned-accounts",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.59,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1757,
+    "title": "可回收且低脂的产品",
+    "titleSlug": "recyclable-and-low-fat-products",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.83,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1767,
+    "title": "寻找没有被执行的任务对",
+    "titleSlug": "find-the-subtasks-that-did-not-execute",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.74,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1777,
+    "title": "每家商店的产品价格",
+    "titleSlug": "products-price-for-each-store",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.78,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1783,
+    "title": "大满贯数量",
+    "titleSlug": "grand-slam-titles",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.78,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1789,
+    "title": "员工的直属部门",
+    "titleSlug": "primary-department-for-each-employee",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.72,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1795,
+    "title": "每个产品在不同商店的价格",
+    "titleSlug": "rearrange-products-table",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.79,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1809,
+    "title": "没有广告的剧集",
+    "titleSlug": "ad-free-sessions",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.6,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1811,
+    "title": "寻找面试候选人",
+    "titleSlug": "find-interview-candidates",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.6,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1821,
+    "title": "寻找今年具有正收入的客户",
+    "titleSlug": "find-customers-with-positive-revenue-this-year",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.85,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1831,
+    "title": "每天的最大交易",
+    "titleSlug": "maximum-transaction-each-day",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.76,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1841,
+    "title": "联赛信息统计",
+    "titleSlug": "league-statistics",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.53,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1843,
+    "title": "可疑银行账户",
+    "titleSlug": "suspicious-bank-accounts",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.41,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1853,
+    "title": "转换日期格式",
+    "titleSlug": "convert-date-format",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.66,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1867,
+    "title": "最大数量高于平均水平的订单",
+    "titleSlug": "orders-with-maximum-quantity-above-average",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.66,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1873,
+    "title": "计算特殊奖金",
+    "titleSlug": "calculate-special-bonus",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.61,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1875,
+    "title": "将工资相同的雇员分组",
+    "titleSlug": "group-employees-of-the-same-salary",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.6,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1890,
+    "title": "2020年最后一次登录",
+    "titleSlug": "the-latest-login-in-2020",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.69,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1892,
+    "title": "页面推荐Ⅱ",
+    "titleSlug": "page-recommendations-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.39,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1907,
+    "title": "按分类统计薪水",
+    "titleSlug": "count-salary-categories",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.66,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1917,
+    "title": "Leetcodify 好友推荐",
+    "titleSlug": "leetcodify-friends-recommendations",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.31,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1919,
+    "title": "兴趣相同的朋友",
+    "titleSlug": "leetcodify-similar-friends",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.43,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1934,
+    "title": "确认率",
+    "titleSlug": "confirmation-rate",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.63,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1939,
+    "title": "主动请求确认消息的用户",
+    "titleSlug": "users-that-actively-request-confirmation-messages",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.58,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1949,
+    "title": "坚定的友谊",
+    "titleSlug": "strong-friendship",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.54,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1951,
+    "title": "查询具有最多共同关注者的所有两两结对组",
+    "titleSlug": "all-the-pairs-with-the-maximum-number-of-common-followers",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.65,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1965,
+    "title": "丢失信息的雇员",
+    "titleSlug": "employees-with-missing-information",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.71,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1972,
+    "title": "同一天的第一个电话和最后一个电话",
+    "titleSlug": "first-and-last-call-on-the-same-day",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.42,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1978,
+    "title": "上级经理已离职的公司员工",
+    "titleSlug": "employees-whose-manager-left-the-company",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.47,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1988,
+    "title": "找出每所学校的最低分数要求",
+    "titleSlug": "find-cutoff-score-for-each-school",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.64,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 1990,
+    "title": "统计实验的数量",
+    "titleSlug": "count-the-number-of-experiments",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.49,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2004,
+    "title": "职员招聘人数",
+    "titleSlug": "the-number-of-seniors-and-juniors-to-join-the-company",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.48,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2010,
+    "title": "职员招聘人数 II",
+    "titleSlug": "the-number-of-seniors-and-juniors-to-join-the-company-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.65,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2020,
+    "title": "无流量的帐户数",
+    "titleSlug": "number-of-accounts-that-did-not-stream",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.68,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2026,
+    "title": "低质量的问题",
+    "titleSlug": "low-quality-problems",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.8,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2041,
+    "title": "面试中被录取的候选人",
+    "titleSlug": "accepted-candidates-from-the-interviews",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.78,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2051,
+    "title": "商店中每个成员的级别",
+    "titleSlug": "the-category-of-each-member-in-the-store",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.61,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2066,
+    "title": "账户余额",
+    "titleSlug": "account-balance",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.79,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2072,
+    "title": "赢得比赛的大学",
+    "titleSlug": "the-winner-university",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.71,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2082,
+    "title": "富有客户的数量",
+    "titleSlug": "the-number-of-rich-customers",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.76,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2084,
+    "title": "为订单类型为 0 的客户删除类型为 1 的订单",
+    "titleSlug": "drop-type-1-orders-for-customers-with-type-0-orders",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.8,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2112,
+    "title": "最繁忙的机场",
+    "titleSlug": "the-airport-with-the-most-traffic",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.69,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2118,
+    "title": "建立方程",
+    "titleSlug": "build-the-equation",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.57,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2142,
+    "title": "每辆车的乘客人数 I",
+    "titleSlug": "the-number-of-passengers-in-each-bus-i",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.47,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2153,
+    "title": "每辆车的乘客人数 II",
+    "titleSlug": "the-number-of-passengers-in-each-bus-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.43,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2159,
+    "title": "分别排序两列",
+    "titleSlug": "order-two-columns-independently",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.62,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2173,
+    "title": "最多连胜的次数",
+    "titleSlug": "longest-winning-streak",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.53,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2175,
+    "title": "世界排名的变化",
+    "titleSlug": "the-change-in-global-rankings",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.53,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2199,
+    "title": "找到每篇文章的主题",
+    "titleSlug": "finding-the-topic-of-each-post",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.59,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2205,
+    "title": "有资格享受折扣的用户数量",
+    "titleSlug": "the-number-of-users-that-are-eligible-for-discount",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.43,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2228,
+    "title": "7 天内两次购买的用户",
+    "titleSlug": "users-with-two-purchases-within-seven-days",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.49,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2230,
+    "title": "查找可享受优惠的用户",
+    "titleSlug": "the-users-that-are-eligible-for-discount",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.5,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2238,
+    "title": "司机成为乘客的次数",
+    "titleSlug": "number-of-times-a-driver-was-a-passenger",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.67,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2252,
+    "title": "表的动态旋转",
+    "titleSlug": "dynamic-pivoting-of-a-table",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.58,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2253,
+    "title": "动态取消表的旋转",
+    "titleSlug": "dynamic-unpivoting-of-a-table",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.7,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2292,
+    "title": "连续两年有 3 个及以上订单的产品",
+    "titleSlug": "products-with-three-or-more-orders-in-two-consecutive-years",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.42,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2298,
+    "title": "周末任务计数",
+    "titleSlug": "tasks-count-in-the-weekend",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.78,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2308,
+    "title": "按性别排列表格",
+    "titleSlug": "arrange-table-by-gender",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.77,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2314,
+    "title": "每个城市最高气温的第一天",
+    "titleSlug": "the-first-day-of-the-maximum-recorded-degree-in-each-city",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.73,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2324,
+    "title": "产品销售分析 IV",
+    "titleSlug": "product-sales-analysis-iv",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.7,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2329,
+    "title": "产品销售分析Ⅴ",
+    "titleSlug": "product-sales-analysis-v",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.73,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2339,
+    "title": "联赛的所有比赛",
+    "titleSlug": "all-the-matches-of-the-league",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.81,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2346,
+    "title": "以百分比计算排名",
+    "titleSlug": "compute-the-rank-as-a-percentage",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.37,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2356,
+    "title": "每位教师所教授的科目种类的数量",
+    "titleSlug": "number-of-unique-subjects-taught-by-each-teacher",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.84,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2362,
+    "title": "生成发票",
+    "titleSlug": "generate-the-invoice",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.72,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2372,
+    "title": "计算每个销售人员的影响力",
+    "titleSlug": "calculate-the-influence-of-each-salesperson",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.77,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2377,
+    "title": "整理奥运表",
+    "titleSlug": "sort-the-olympic-table",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.82,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2388,
+    "title": "将表中的空值更改为前一个值",
+    "titleSlug": "change-null-values-in-a-table-to-the-previous-value",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.62,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2394,
+    "title": "开除员工",
+    "titleSlug": "employees-with-deductions",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.48,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2474,
+    "title": "购买量严格增加的客户",
+    "titleSlug": "customers-with-strictly-increasing-purchases",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.5,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2480,
+    "title": "形成化学键",
+    "titleSlug": "form-a-chemical-bond",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.83,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2494,
+    "title": "合并在同一个大厅重叠的活动",
+    "titleSlug": "merge-overlapping-events-in-the-same-hall",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.46,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2504,
+    "title": "把名字和职业联系起来",
+    "titleSlug": "concatenate-the-name-and-the-profession",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.82,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2668,
+    "title": "查询员工当前薪水",
+    "titleSlug": "find-latest-salaries",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.74,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2669,
+    "title": "统计 Spotify 排行榜上艺术家出现次数",
+    "titleSlug": "count-artist-occurrences-on-spotify-ranking-list",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.74,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2686,
+    "title": "即时食物配送 III",
+    "titleSlug": "immediate-food-delivery-iii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.68,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2687,
+    "title": "自行车的最后使用时间",
+    "titleSlug": "bikes-last-time-used",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.79,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2688,
+    "title": "查找活跃用户",
+    "titleSlug": "find-active-users",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.45,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2701,
+    "title": "连续递增交易",
+    "titleSlug": "consecutive-transactions-with-increasing-amounts",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.31,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2720,
+    "title": "受欢迎度百分比",
+    "titleSlug": "popularity-percentage",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.54,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2738,
+    "title": "统计文本中单词的出现次数",
+    "titleSlug": "count-occurrences-in-text",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.55,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2752,
+    "title": "在连续天数上进行了最多交易次数的顾客",
+    "titleSlug": "customers-with-maximum-number-of-transactions-on-consecutive-days",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.45,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2783,
+    "title": "航班入座率和等待名单分析",
+    "titleSlug": "flight-occupancy-and-waitlist-analysis",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.38,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2837,
+    "title": "总旅行距离",
+    "titleSlug": "total-traveled-distance",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.69,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2853,
+    "title": "最高薪水差异",
+    "titleSlug": "highest-salaries-difference",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.64,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2854,
+    "title": "滚动平均步数",
+    "titleSlug": "rolling-average-steps",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.65,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2893,
+    "title": "计算每个区间内的订单",
+    "titleSlug": "calculate-orders-within-each-interval",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.68,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2922,
+    "title": "市场分析 III",
+    "titleSlug": "market-analysis-iii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.35,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2978,
+    "title": "对称坐标",
+    "titleSlug": "symmetric-coordinates",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.4,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2984,
+    "title": "找到每座城市的高峰通话小时",
+    "titleSlug": "find-peak-calling-hours-for-each-city",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.6,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2985,
+    "title": "计算订单平均商品数量",
+    "titleSlug": "calculate-compressed-mean",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.85,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2986,
+    "title": "找到第三笔交易",
+    "titleSlug": "find-third-transaction",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.48,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2987,
+    "title": "寻找房价最贵的城市",
+    "titleSlug": "find-expensive-cities",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.76,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2988,
+    "title": "最大部门的经理",
+    "titleSlug": "manager-of-the-largest-department",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.76,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2989,
+    "title": "班级表现",
+    "titleSlug": "class-performance",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.87,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2990,
+    "title": "贷款类型",
+    "titleSlug": "loan-types",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.6,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2991,
+    "title": "最好的三家酒庄",
+    "titleSlug": "top-three-wineries",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.5,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2993,
+    "title": "发生在周五的交易 I",
+    "titleSlug": "friday-purchases-i",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.8,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2994,
+    "title": "发生在周五的交易 II",
+    "titleSlug": "friday-purchases-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.77,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 2995,
+    "title": "观众变主播",
+    "titleSlug": "viewers-turned-streamers",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.46,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3050,
+    "title": "披萨配料成本分析",
+    "titleSlug": "pizza-toppings-cost-analysis",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.64,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3051,
+    "title": "寻找数据科学家职位的候选人",
+    "titleSlug": "find-candidates-for-data-scientist-position",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.74,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3052,
+    "title": "最大化商品",
+    "titleSlug": "maximize-items",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.66,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3053,
+    "title": "根据长度分类三角形",
+    "titleSlug": "classifying-triangles-by-lengths",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.58,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3054,
+    "title": "二叉树节点",
+    "titleSlug": "binary-tree-nodes",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.77,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3055,
+    "title": "最高欺诈百分位数",
+    "titleSlug": "top-percentile-fraud",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.6,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3056,
+    "title": "快照分析",
+    "titleSlug": "snaps-analysis",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.56,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3057,
+    "title": "员工项目分配",
+    "titleSlug": "employees-project-allocation",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.68,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3058,
+    "title": "没有共同朋友的朋友",
+    "titleSlug": "friends-with-no-mutual-friends",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.47,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3059,
+    "title": "找到所有不同的邮件域名",
+    "titleSlug": "find-all-unique-email-domains",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.7,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3060,
+    "title": "时间范围内的用户活动",
+    "titleSlug": "user-activities-within-time-bounds",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.39,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3061,
+    "title": "计算滞留雨水",
+    "titleSlug": "calculate-trapping-rain-water",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.77,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3087,
+    "title": "查找热门话题标签",
+    "titleSlug": "find-trending-hashtags",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.66,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3089,
+    "title": "查找突发行为",
+    "titleSlug": "find-bursty-behavior",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.38,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3103,
+    "title": "查找热门话题标签 II",
+    "titleSlug": "find-trending-hashtags-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.66,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3118,
+    "title": "发生在周五的交易 III",
+    "titleSlug": "friday-purchase-iii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.62,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3124,
+    "title": "查找最长的电话",
+    "titleSlug": "find-longest-calls",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.59,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3126,
+    "title": "服务器利用时间",
+    "titleSlug": "server-utilization-time",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.64,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3140,
+    "title": "连续空余座位 II",
+    "titleSlug": "consecutive-available-seats-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.53,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3150,
+    "title": "无效的推文 II",
+    "titleSlug": "invalid-tweets-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.85,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3156,
+    "title": "员工任务持续时间和并发任务",
+    "titleSlug": "employee-task-duration-and-concurrent-tasks",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.41,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3166,
+    "title": "计算停车费与时长",
+    "titleSlug": "calculate-parking-fees-and-duration",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.49,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3172,
+    "title": "第二天验证",
+    "titleSlug": "second-day-verification",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.61,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3182,
+    "title": "查找得分最高的学生",
+    "titleSlug": "find-top-scoring-students",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.48,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3188,
+    "title": "查找得分最高的学生 II",
+    "titleSlug": "find-top-scoring-students-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.44,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3198,
+    "title": "查找每个州的城市",
+    "titleSlug": "find-cities-in-each-state",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.68,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3204,
+    "title": "按位用户权限分析",
+    "titleSlug": "bitwise-user-permissions-analysis",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.93,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3214,
+    "title": "同比增长率",
+    "titleSlug": "year-on-year-growth-rate",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.54,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3220,
+    "title": "奇数和偶数交易",
+    "titleSlug": "odd-and-even-transactions",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.66,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3230,
+    "title": "客户购买行为分析",
+    "titleSlug": "customer-purchasing-behavior-analysis",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.33,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3236,
+    "title": "首席执行官下属层级",
+    "titleSlug": "ceo-subordinate-hierarchy",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.69,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3246,
+    "title": "英超积分榜排名",
+    "titleSlug": "premier-league-table-ranking",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.77,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3252,
+    "title": "英超积分榜排名 II",
+    "titleSlug": "premier-league-table-ranking-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.55,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3262,
+    "title": "查找重叠的班次",
+    "titleSlug": "find-overlapping-shifts",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.56,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3268,
+    "title": "查找重叠的班次 II",
+    "titleSlug": "find-overlapping-shifts-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.56,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3278,
+    "title": "寻找数据科学家职位的候选人 II",
+    "titleSlug": "find-candidates-for-data-scientist-position-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.45,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3293,
+    "title": "计算产品最终价格",
+    "titleSlug": "calculate-product-final-price",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.8,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3308,
+    "title": "寻找表现最佳的司机",
+    "titleSlug": "find-top-performing-driver",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.48,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3322,
+    "title": "英超积分榜排名 III",
+    "titleSlug": "premier-league-table-ranking-iii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.72,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3328,
+    "title": "查找每个州的城市 II",
+    "titleSlug": "find-cities-in-each-state-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.6,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3338,
+    "title": "第二高的薪水 II",
+    "titleSlug": "second-highest-salary-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.86,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3358,
+    "title": "评分为 NULL 的图书",
+    "titleSlug": "books-with-null-ratings",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.84,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3368,
+    "title": "首字母大写",
+    "titleSlug": "first-letter-capitalization",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.68,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3374,
+    "title": "首字母大写 II",
+    "titleSlug": "first-letter-capitalization-ii",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.38,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3384,
+    "title": "球队传球成功的优势得分",
+    "titleSlug": "team-dominance-by-pass-success",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.76,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3390,
+    "title": "最长团队传球连击",
+    "titleSlug": "longest-team-pass-streak",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.42,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3401,
+    "title": "寻找环形礼物交换链",
+    "titleSlug": "find-circular-gift-exchange-chains",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.53,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3415,
+    "title": "查找具有三个连续数字的产品",
+    "titleSlug": "find-products-with-three-consecutive-digits",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.83,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3421,
+    "title": "查找进步的学生",
+    "titleSlug": "find-students-who-improved",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.52,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3436,
+    "title": "查找合法邮箱",
+    "titleSlug": "find-valid-emails",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.5,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3451,
+    "title": "查找无效的 IP 地址",
+    "titleSlug": "find-invalid-ip-addresses",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.56,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3465,
+    "title": "查找具有有效序列号的产品",
+    "titleSlug": "find-products-with-valid-serial-numbers",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.34,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3482,
+    "title": "分析组织层级",
+    "titleSlug": "analyze-organization-hierarchy",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.61,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3497,
+    "title": "分析订阅转化",
+    "titleSlug": "analyze-subscription-conversion",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.7,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3521,
+    "title": "查找推荐产品对",
+    "titleSlug": "find-product-recommendation-pairs",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.59,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3554,
+    "title": "查找类别推荐对",
+    "titleSlug": "find-category-recommendation-pairs",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.59,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3564,
+    "title": "季节性销售分析",
+    "titleSlug": "seasonal-sales-analysis",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.55,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3570,
+    "title": "查找无可用副本的书籍",
+    "titleSlug": "find-books-with-no-available-copies",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.47,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3580,
+    "title": "寻找持续进步的员工",
+    "titleSlug": "find-consistently-improving-employees",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.53,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3586,
+    "title": "寻找 COVID 康复患者",
+    "titleSlug": "find-covid-recovery-patients",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.42,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3601,
+    "title": "寻找燃油效率提升的驾驶员",
+    "titleSlug": "find-drivers-with-improved-fuel-efficiency",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.48,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  },
+  {
+    "id": 3611,
+    "title": "查找超预订员工",
+    "titleSlug": "find-overbooked-employees",
+    "difficulty": "MEDIUM",
+    "tags": [
+      "数据库"
+    ],
+    "passRate": 0.47,
+    "description": "",
+    "sampleInput": "",
+    "sampleOutput": "",
+    "hints": []
+  }
+]

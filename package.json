@@ -1,0 +1,29 @@
+{
+  "name": "student-sql-oj-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "crawl": "tsx scripts/leetcode-crawler.ts",
+    "crawl:convert": "tsx scripts/convert-to-mock.ts"
+  },
+  "dependencies": {
+    "@vitejs/plugin-vue": "^5.2.4",
+    "axios": "^1.9.0",
+    "echarts": "^5.6.0",
+    "element-plus": "^2.9.10",
+    "monaco-editor": "^0.52.2",
+    "pinia": "^2.3.1",
+    "vue": "^3.5.14",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vue-tsc": "^2.2.10",
+    "tsx": "^4.7.0"
+  }
+}

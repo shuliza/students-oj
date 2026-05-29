@@ -1,0 +1,40 @@
+import axios from 'axios'
+import { ElMessage } from 'element-plus'
+
+const http = axios.create({
+  baseURL: '/api',
+  timeout: 15000
+})
+
+http.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token')
+  const user = JSON.parse(localStorage.getItem('user') ?? 'null') as { id?: number } | null
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  if (user?.id) {
+    config.headers['X-User-Id'] = String(user.id)
+  }
+  return config
+})
+
+http.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error.response?.status
+    const message = error.response?.data?.message ?? error.response?.data?.error ?? error.message ?? '请求失败'
+    if (status === 401) {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      ElMessage.error('登录已失效，请重新登录')
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login'
+      }
+    } else {
+      ElMessage.error(message)
+    }
+    return Promise.reject(error)
+  }
+)
+
+export default http

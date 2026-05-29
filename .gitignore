@@ -1,0 +1,16 @@
+node_modules/
+dist/
+output/
+
+backend/*/target/
+backend/target/
+
+*.tsbuildinfo
+*.log
+npm-debug.log*
+
+.idea/
+.claude/settings.local.json
+.vscode/
+.DS_Store
+Thumbs.db

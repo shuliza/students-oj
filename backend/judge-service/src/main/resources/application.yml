@@ -1,0 +1,34 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: judge-service
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:student_oj}?useSSL=false&useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_0900_ai_ci&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:root}
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+studentoj:
+  mq:
+    exchange: student-oj.exchange
+    submission-created-queue: submission.created.q
+    submission-created-routing-key: submission.created
+    judge-finished-routing-key: judge.finished
+  sandbox:
+    base-url: ${SANDBOX_BASE_URL:http://localhost:8084}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}

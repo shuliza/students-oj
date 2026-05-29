@@ -1,0 +1,26 @@
+server:
+  port: 8085
+spring:
+  application:
+    name: ai-service
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:student_oj}?useSSL=false&useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_0900_ai_ci&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:root}
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+studentoj:
+  ai:
+    mode: ${STUDENTOJ_AI_MODE:rule}
+openai:
+  api-key: ${OPENAI_API_KEY:}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}

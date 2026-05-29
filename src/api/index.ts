@@ -1,0 +1,192 @@
+import http from './http'
+import type { ActivityItem, ClassGroup, Problem, StudentTodaySolved, Submission, User } from '@/types'
+
+export const authApi = {
+  async login(username: string, password: string, role: 'STUDENT' | 'TEACHER') {
+    const { data } = await http.post('/auth/login', { username, password, role })
+    return {
+      token: data.token as string,
+      user: mapLoginUser(data)
+    }
+  },
+  async logout() {
+    await http.post('/auth/logout')
+  },
+  async me() {
+    const { data } = await http.get('/auth/me')
+    return mapLoginUser(data)
+  }
+}
+
+export const problemApi = {
+  async list() {
+    const { data } = await http.get<Problem[]>('/problem/list')
+    return data
+  },
+  async detail(id: number) {
+    const { data } = await http.get<Problem>(`/problem/${id}`)
+    return data
+  },
+  async submit(problemId: number, sql: string) {
+    const { data } = await http.post<Submission>('/submission/judge', { problemId, sqlContent: sql })
+    return data
+  }
+}
+
+export const submissionApi = {
+  async list(params?: { groupName?: string; studentId?: number }) {
+    const { data } = await http.get<Submission[]>('/submission/list', { params })
+    return data
+  },
+  async mine() {
+    const { data } = await http.get<Submission[]>('/submission/mine')
+    return data
+  },
+  async get(id: number) {
+    const { data } = await http.get<Submission>(`/submission/${id}`)
+    return data
+  }
+}
+
+export const statisticsApi = {
+  async activity() {
+    const { data } = await http.get<ActivityItem[]>('/statistics/me/activity')
+    return data
+  },
+  async overview() {
+    const { data } = await http.get('/statistics/me/overview')
+    return {
+      todaySubmissions: data.todaySolved ?? data.todaySubmissions ?? data.submissions ?? 0,
+      acceptedProblems: data.acceptedProblems ?? data.students ?? 0,
+      activeDays: data.activeDays ?? 0,
+      accuracy: data.accuracy ?? data.passRate ?? 0,
+      students: data.students ?? 0,
+      problems: data.problems ?? 0,
+      submissions: data.submissions ?? 0,
+      passRate: data.passRate ?? 0,
+      todayAttempted: data.todayAttempted ?? 0,
+      todayPassed: data.todayPassed ?? 0
+    }
+  },
+  async teacherActivity(params?: { groupName?: string; studentId?: number }) {
+    const { data } = await http.get<ActivityItem[]>('/statistics/teacher/activity', { params })
+    return data
+  },
+  async teacherOverview(params?: { groupName?: string; studentId?: number }) {
+    const { data } = await http.get('/statistics/teacher/overview', { params })
+    return {
+      todaySubmissions: data.todaySolved ?? data.todaySubmissions ?? 0,
+      acceptedProblems: data.acceptedProblems ?? 0,
+      activeDays: data.activeDays ?? 0,
+      accuracy: data.accuracy ?? data.passRate ?? 0,
+      students: data.students ?? 0,
+      problems: data.problems ?? 0,
+      submissions: data.submissions ?? 0,
+      passRate: data.passRate ?? 0,
+      todayAttempted: data.todayAttempted ?? 0,
+      todayPassed: data.todayPassed ?? 0
+    }
+  },
+  async teacherTodaySolved(params?: { groupName?: string; studentId?: number }) {
+    const { data } = await http.get<StudentTodaySolved[]>('/statistics/teacher/today-solved', { params })
+    return data
+  }
+}
+
+export const teacherApi = {
+  async students() {
+    const { data } = await http.get<User[]>('/teacher/students')
+    return data
+  },
+  async groups() {
+    const { data } = await http.get<ClassGroup[]>('/teacher/groups')
+    return data
+  },
+  async problems() {
+    return problemApi.list()
+  },
+  async submissions(params?: { groupName?: string; studentId?: number }) {
+    return submissionApi.list(params)
+  },
+  async exportGrades(request: { groupId?: number; startDate?: string; endDate?: string; format: string }) {
+    const { data } = await http.post('/teacher/grades/export', request, { responseType: 'blob' })
+    return data
+  },
+  async exportStudentGrades(studentId: number) {
+    const { data } = await http.get(`/teacher/grades/export/student/${studentId}`, { responseType: 'blob' })
+    return data
+  },
+  async createGroup(request: { name: string; teacherName?: string; description?: string }) {
+    await http.post('/teacher/groups', request)
+  },
+  async updateGroup(id: number, request: { name: string; teacherName?: string; description?: string }) {
+    await http.put(`/teacher/groups/${id}`, request)
+  },
+  async deleteGroup(id: number) {
+    await http.delete(`/teacher/groups/${id}`)
+  },
+  async getGroupMembers(groupId: number) {
+    const { data } = await http.get<User[]>(`/teacher/groups/${groupId}/members`)
+    return data
+  },
+  async addGroupMembers(groupId: number, studentIds: number[]) {
+    await http.post(`/teacher/groups/${groupId}/members`, studentIds)
+  },
+  async removeGroupMembers(groupId: number, studentIds: number[]) {
+    await http.delete(`/teacher/groups/${groupId}/members`, { data: studentIds })
+  },
+  async exportStudentTemplate() {
+    const { data } = await http.get('/teacher/students/template', { responseType: 'blob' })
+    return data
+  },
+  async importStudents(file: File) {
+    const formData = new FormData()
+    formData.append('file', file)
+    const { data } = await http.post('/teacher/students/import', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    return data
+  },
+  async exportGroupMembers(groupId: number) {
+    const { data } = await http.get(`/teacher/groups/${groupId}/members/export`, { responseType: 'blob' })
+    return data
+  },
+  async importGroupMembers(groupId: number, file: File) {
+    const formData = new FormData()
+    formData.append('file', file)
+    const { data } = await http.post(`/teacher/groups/${groupId}/members/import`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    return data
+  }
+}
+
+export const aiApi = {
+  async requestSuggestion(request: {
+    submissionId: number
+    problemId: number
+    status: string
+    errorMessage?: string
+    studentSql: string
+  }) {
+    const { data } = await http.post('/ai/suggestion', request)
+    return data as { suggestion: string; createdAt?: string }
+  },
+  async history(problemId: number) {
+    const { data } = await http.get('/ai/suggestion/history', { params: { problemId } })
+    return data as Array<{ suggestion: string; createdAt?: string }>
+  }
+}
+
+function mapLoginUser(data: any): User {
+  return {
+    id: data.userId,
+    username: data.username,
+    realName: data.realName,
+    role: data.role,
+    studentNo: data.studentNo,
+    email: data.email,
+    groupName: data.groupName,
+    status: data.status
+  }
+}

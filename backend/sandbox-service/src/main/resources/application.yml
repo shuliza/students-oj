@@ -1,0 +1,25 @@
+server:
+  port: 8084
+spring:
+  application:
+    name: sandbox-service
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${SANDBOX_MYSQL_DATABASE:student_oj_sandbox}?useSSL=false&useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_0900_ai_ci&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&allowMultiQueries=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${SANDBOX_MYSQL_USERNAME:sandbox}
+    password: ${SANDBOX_MYSQL_PASSWORD:sandbox123}
+    hikari:
+      maximum-pool-size: 8
+      connection-timeout: 5000
+studentoj:
+  sandbox:
+    query-timeout-seconds: 5
+    max-rows: 5000
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}
