@@ -55,6 +55,7 @@ services:
       RABBITMQ_PORT: "5672"
       RABBITMQ_USERNAME: guest
       RABBITMQ_PASSWORD: guest
+      STUDENTOJ_AUTH_INTERNAL_SECRET: student-oj-internal-v1
     depends_on:
       mysql:
         condition: service_healthy

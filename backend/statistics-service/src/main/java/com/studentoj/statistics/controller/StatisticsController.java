@@ -1,10 +1,12 @@
 package com.studentoj.statistics.controller;
 
+import com.studentoj.common.auth.AuthContext;
+import com.studentoj.common.auth.RequireRole;
+import com.studentoj.common.auth.Role;
 import com.studentoj.statistics.dto.ActivityResponse;
 import com.studentoj.statistics.dto.OverviewResponse;
 import com.studentoj.statistics.dto.StudentTodaySolvedResponse;
 import com.studentoj.statistics.service.StatisticsService;
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,16 +24,19 @@ public class StatisticsController {
     }
 
     @GetMapping("/me/overview")
-    public OverviewResponse myOverview(HttpServletRequest request) {
-        return statisticsService.studentOverview(extractUserId(request));
+    @RequireRole(Role.STUDENT)
+    public OverviewResponse myOverview() {
+        return statisticsService.studentOverview(AuthContext.userId());
     }
 
     @GetMapping("/me/activity")
-    public List<ActivityResponse> myActivity(HttpServletRequest request) {
-        return statisticsService.activityForUser(extractUserId(request));
+    @RequireRole(Role.STUDENT)
+    public List<ActivityResponse> myActivity() {
+        return statisticsService.activityForUser(AuthContext.userId());
     }
 
     @GetMapping("/teacher/overview")
+    @RequireRole(Role.TEACHER)
     public OverviewResponse teacherOverview(
             @RequestParam(value = "groupName", required = false) String groupName,
             @RequestParam(value = "studentId", required = false) Long studentId) {
@@ -39,6 +44,7 @@ public class StatisticsController {
     }
 
     @GetMapping("/teacher/activity")
+    @RequireRole(Role.TEACHER)
     public List<ActivityResponse> teacherActivity(
             @RequestParam(value = "groupName", required = false) String groupName,
             @RequestParam(value = "studentId", required = false) Long studentId) {
@@ -46,21 +52,11 @@ public class StatisticsController {
     }
 
     @GetMapping("/teacher/today-solved")
+    @RequireRole(Role.TEACHER)
     public List<StudentTodaySolvedResponse> teacherTodaySolved(
             @RequestParam(value = "groupName", required = false) String groupName,
             @RequestParam(value = "studentId", required = false) Long studentId) {
         return statisticsService.studentTodaySolved(groupName, studentId);
     }
 
-    private Long extractUserId(HttpServletRequest request) {
-        String header = request.getHeader("X-User-Id");
-        if (header == null || header.isBlank()) {
-            return 0L;
-        }
-        try {
-            return Long.parseLong(header.trim());
-        } catch (NumberFormatException e) {
-            return 0L;
-        }
-    }
 }

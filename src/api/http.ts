@@ -8,12 +8,8 @@ const http = axios.create({
 
 http.interceptors.request.use((config) => {
   const token = localStorage.getItem('token')
-  const user = JSON.parse(localStorage.getItem('user') ?? 'null') as { id?: number } | null
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
-  }
-  if (user?.id) {
-    config.headers['X-User-Id'] = String(user.id)
   }
   return config
 })

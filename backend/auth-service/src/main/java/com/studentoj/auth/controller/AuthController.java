@@ -4,6 +4,8 @@ import com.studentoj.auth.dto.LoginRequest;
 import com.studentoj.auth.dto.LoginResponse;
 import com.studentoj.auth.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +35,17 @@ public class AuthController {
     @GetMapping("/me")
     public LoginResponse me(HttpServletRequest request) {
         return authService.me(extractToken(request));
+    }
+
+    @GetMapping("/introspect")
+    public ResponseEntity<Void> introspect(HttpServletRequest request) {
+        LoginResponse user = authService.me(extractToken(request));
+        return ResponseEntity.noContent()
+                .header("X-Auth-User-Id", String.valueOf(user.userId()))
+                .header("X-Auth-Username", user.username())
+                .header("X-Auth-User-Role", user.role())
+                .header(HttpHeaders.CACHE_CONTROL, "no-store")
+                .build();
     }
 
     private String extractToken(HttpServletRequest request) {

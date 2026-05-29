@@ -1,5 +1,7 @@
 package com.studentoj.teacher.controller;
 
+import com.studentoj.common.auth.RequireRole;
+import com.studentoj.common.auth.Role;
 import com.studentoj.teacher.dto.ClassGroupResponse;
 import com.studentoj.teacher.dto.ExportRequest;
 import com.studentoj.teacher.dto.GroupRequest;
@@ -23,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/teacher")
+@RequireRole(Role.TEACHER)
 public class TeacherController {
     private final TeacherService teacherService;
 

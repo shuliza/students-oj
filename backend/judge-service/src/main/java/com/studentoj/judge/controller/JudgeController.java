@@ -1,5 +1,7 @@
 package com.studentoj.judge.controller;
 
+import com.studentoj.common.auth.RequireRole;
+import com.studentoj.common.auth.Role;
 import com.studentoj.judge.dto.JudgeRequest;
 import com.studentoj.judge.dto.JudgeResult;
 import com.studentoj.judge.service.JudgeService;
@@ -21,11 +23,13 @@ public class JudgeController {
     }
 
     @PostMapping("/run")
+    @RequireRole(Role.TEACHER)
     public JudgeResult judge(@RequestBody JudgeRequest request) {
         return judgeService.judge(request);
     }
 
     @PostMapping("/rejudge/{submissionId}")
+    @RequireRole(Role.TEACHER)
     public JudgeResult rejudge(@PathVariable("submissionId") Long submissionId, @RequestBody(required = false) JudgeRequest request) {
         if (request == null) {
             return new JudgeResult(submissionId, "RUNTIME_ERROR", 0, 0, "缺少重判请求体");
