@@ -56,7 +56,42 @@ public class TeacherService {
     public byte[] exportGrades(ExportRequest request) {
         Long groupId = (request != null && request.groupId() != null && request.groupId() > 0) ? request.groupId() : null;
         List<Map<String, Object>> data = teacherMapper.selectGradeData(groupId, null);
-        return generateGradeExcel(data);
+        return isCsv(request == null ? null : request.format()) ? generateGradeCsv(data) : generateGradeExcel(data);
+    }
+
+    public static boolean isCsv(String format) {
+        return format != null && "csv".equalsIgnoreCase(format.trim());
+    }
+
+    private static final String[] GRADE_COLS = {"学号", "姓名", "分组", "题目", "提交次数", "最高分", "通过状态"};
+
+    private byte[] generateGradeCsv(List<Map<String, Object>> data) {
+        StringBuilder sb = new StringBuilder();
+        sb.append('﻿'); // UTF-8 BOM，确保 Excel 正确识别中文
+        sb.append(String.join(",", GRADE_COLS)).append("\r\n");
+        for (Map<String, Object> row : data) {
+            int passed = row.get("passed") == null ? 0 : ((Number) row.get("passed")).intValue();
+            int submitCount = row.get("submitCount") == null ? 0 : ((Number) row.get("submitCount")).intValue();
+            int bestScore = row.get("bestScore") == null ? 0 : ((Number) row.get("bestScore")).intValue();
+            sb.append(csvCell((String) row.getOrDefault("studentNo", ""))).append(',')
+              .append(csvCell((String) row.getOrDefault("realName", ""))).append(',')
+              .append(csvCell((String) row.getOrDefault("groupName", ""))).append(',')
+              .append(csvCell((String) row.getOrDefault("problemTitle", ""))).append(',')
+              .append(submitCount).append(',')
+              .append(bestScore).append(',')
+              .append(csvCell(passed == 1 ? "通过" : "未通过")).append("\r\n");
+        }
+        return sb.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+    }
+
+    private String csvCell(String value) {
+        if (value == null) {
+            return "";
+        }
+        if (value.contains(",") || value.contains("\"") || value.contains("\n") || value.contains("\r")) {
+            return "\"" + value.replace("\"", "\"\"") + "\"";
+        }
+        return value;
     }
 
     public byte[] exportStudentGrades(Long studentId) {
