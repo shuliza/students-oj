@@ -1,5 +1,5 @@
 import http from './http'
-import type { ActivityItem, ClassGroup, Problem, StudentTodaySolved, Submission, User } from '@/types'
+import type { ActivityItem, ClassGroup, Problem, ProblemAdmin, ProblemSavePayload, StudentTodaySolved, Submission, User } from '@/types'
 
 export const authApi = {
   async login(username: string, password: string, role: 'STUDENT' | 'TEACHER') {
@@ -29,6 +29,13 @@ export const problemApi = {
   },
   async submit(problemId: number, sql: string) {
     const { data } = await http.post<Submission>('/submission/judge', { problemId, sqlContent: sql })
+    return data
+  },
+  async run(problemId: number, sql: string) {
+    const { data } = await http.post<{ status: string; runtimeMs: number; message: string; match: boolean }>(
+      '/submission/run',
+      { problemId, sqlContent: sql }
+    )
     return data
   }
 }
@@ -175,6 +182,40 @@ export const aiApi = {
   async history(problemId: number) {
     const { data } = await http.get('/ai/suggestion/history', { params: { problemId } })
     return data as Array<{ suggestion: string; createdAt?: string }>
+  }
+}
+
+export const problemAdminApi = {
+  async list() {
+    const { data } = await http.get<ProblemAdmin[]>('/problem/admin/list')
+    return data
+  },
+  async detail(id: number) {
+    const { data } = await http.get<ProblemAdmin>(`/problem/admin/${id}`)
+    return data
+  },
+  async create(payload: ProblemSavePayload) {
+    const { data } = await http.post<ProblemAdmin>('/problem/admin', payload)
+    return data
+  },
+  async update(id: number, payload: ProblemSavePayload) {
+    const { data } = await http.put<ProblemAdmin>(`/problem/admin/${id}`, payload)
+    return data
+  },
+  async remove(id: number) {
+    await http.delete(`/problem/admin/${id}`)
+  },
+  async exportTemplate() {
+    const { data } = await http.get('/problem/admin/template', { responseType: 'blob' })
+    return data
+  },
+  async importProblems(file: File) {
+    const formData = new FormData()
+    formData.append('file', file)
+    const { data } = await http.post('/problem/admin/import', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    return data as { imported: number }
   }
 }
 

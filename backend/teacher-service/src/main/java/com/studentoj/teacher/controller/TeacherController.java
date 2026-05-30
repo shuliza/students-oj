@@ -43,11 +43,17 @@ public class TeacherController {
         return teacherService.groups();
     }
 
-    @PostMapping(value = "/grades/export", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    @PostMapping("/grades/export")
     public ResponseEntity<byte[]> exportGrades(@RequestBody ExportRequest request) {
         byte[] bytes = teacherService.exportGrades(request);
+        boolean csv = TeacherService.isCsv(request == null ? null : request.format());
+        String filename = csv ? "student-grades.csv" : "student-grades.xlsx";
+        MediaType contentType = csv
+                ? new MediaType("text", "csv", java.nio.charset.StandardCharsets.UTF_8)
+                : MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=student-grades.xlsx")
+                .contentType(contentType)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                 .body(bytes);
     }
 

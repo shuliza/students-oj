@@ -57,3 +57,30 @@ export interface StudentTodaySolved {
   groupName: string
   todaySolved: number
 }
+
+export interface ProblemAdmin {
+  id: number
+  title: string
+  difficulty: 'EASY' | 'MEDIUM' | 'HARD'
+  tags: string[]
+  description: string
+  sampleInput: string
+  sampleOutput: string
+  answerSql: string
+  testcases: string[]
+  status: number
+  submissions?: number
+  passRate?: number
+}
+
+export interface ProblemSavePayload {
+  title: string
+  difficulty: string
+  tags: string[]
+  description: string
+  sampleInput: string
+  sampleOutput: string
+  answerSql: string
+  testcases: string[]
+  status: number
+}

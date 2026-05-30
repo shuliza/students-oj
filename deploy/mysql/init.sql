@@ -56,6 +56,19 @@ CREATE TABLE IF NOT EXISTS problem (
   PRIMARY KEY (id)
 );
 
+-- 题目测试用例：每条 = 一个独立数据集（建表 + 造数据）。
+-- 判题时对每个用例分别执行「学生 SQL vs 参考 answer_sql」，全部通过才判 ACCEPTED。
+-- 没有任何用例行时，judge 回退到 problem.init_sql 作为单一数据集。
+CREATE TABLE IF NOT EXISTS problem_testcase (
+  id         BIGINT   NOT NULL AUTO_INCREMENT,
+  problem_id BIGINT   NOT NULL,
+  ordinal    INT      NOT NULL DEFAULT 1,
+  init_sql   TEXT,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY idx_testcase_problem (problem_id, ordinal)
+);
+
 CREATE TABLE IF NOT EXISTS submission (
   id           BIGINT       NOT NULL AUTO_INCREMENT,
   user_id      BIGINT       NOT NULL,
@@ -152,6 +165,14 @@ INSERT INTO problem(id, title, description, difficulty, tags, init_sql, answer_s
    'score(student_id, course, score)',
    'student_id | course | score | rank_no', 1)
 ON DUPLICATE KEY UPDATE title = VALUES(title);
+
+-- 题目测试用例种子：用每道种子题已有的 init_sql 作为其第 1 个数据集。
+-- 仅当该题尚无任何用例行时插入，避免容器重启重复灌入。
+INSERT INTO problem_testcase(problem_id, ordinal, init_sql)
+SELECT p.id, 1, p.init_sql
+FROM problem p
+WHERE p.id IN (101, 102, 103, 104)
+  AND NOT EXISTS (SELECT 1 FROM problem_testcase t WHERE t.problem_id = p.id);
 
 -- 历史提交（供 dashboard 立刻有数据）
 INSERT INTO submission(id, user_id, problem_id, sql_content, status, score, runtime_ms, message, submitted_at) VALUES

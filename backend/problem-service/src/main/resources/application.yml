@@ -23,6 +23,8 @@ studentoj:
     submission-created-routing-key: submission.created
     judge-finished-routing-key: judge.finished
     problem-update-queue: submission.finished.problem.q
+  sandbox:
+    base-url: ${SANDBOX_BASE_URL:http://localhost:8084}
 management:
   endpoints:
     web:

@@ -2,9 +2,10 @@
 import { onMounted, ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { teacherApi } from '@/api'
-import type { User } from '@/types'
+import type { ClassGroup, User } from '@/types'
 
 const students = ref<User[]>([])
+const groups = ref<ClassGroup[]>([])
 const keyword = ref('')
 const group = ref('')
 const importing = ref(false)
@@ -19,6 +20,10 @@ const list = computed(() =>
 
 const fetchStudents = async () => {
   students.value = await teacherApi.students()
+}
+
+const fetchGroups = async () => {
+  groups.value = await teacherApi.groups()
 }
 
 const handleTemplateExport = async () => {
@@ -61,7 +66,9 @@ const downloadBlob = (blob: Blob, filename: string) => {
   URL.revokeObjectURL(url)
 }
 
-onMounted(fetchStudents)
+onMounted(async () => {
+  await Promise.all([fetchStudents(), fetchGroups()])
+})
 </script>
 
 <template>
@@ -74,8 +81,7 @@ onMounted(fetchStudents)
       <div class="toolbar">
         <el-input v-model="keyword" placeholder="姓名 / 学号" clearable style="width: 220px" />
         <el-select v-model="group" placeholder="班级" clearable style="width: 160px">
-          <el-option label="数据库 1 班" value="数据库 1 班" />
-          <el-option label="数据库 2 班" value="数据库 2 班" />
+          <el-option v-for="item in groups" :key="item.id" :label="item.name" :value="item.name" />
         </el-select>
         <el-button @click="handleTemplateExport">模板导出</el-button>
         <el-button type="primary" :loading="importing" @click="handleBatchImport">批量导入</el-button>
