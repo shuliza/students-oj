@@ -30,6 +30,13 @@ export const problemApi = {
   async submit(problemId: number, sql: string) {
     const { data } = await http.post<Submission>('/submission/judge', { problemId, sqlContent: sql })
     return data
+  },
+  async run(problemId: number, sql: string) {
+    const { data } = await http.post<{ status: string; runtimeMs: number; message: string; match: boolean }>(
+      '/submission/run',
+      { problemId, sqlContent: sql }
+    )
+    return data
   }
 }
 

@@ -16,13 +16,18 @@ type SchemaTable = {
 const route = useRoute()
 const router = useRouter()
 const problem = ref<Problem | null>(null)
-const sql = ref('SELECT s.name, c.course, c.score\nFROM student s\nJOIN score c ON s.id = c.student_id\nWHERE c.score >= 80;')
+const DEFAULT_SQL = 'SELECT s.name, c.course, c.score\nFROM student s\nJOIN score c ON s.id = c.student_id\nWHERE c.score >= 80;'
+const sql = ref(DEFAULT_SQL)
 const result = ref<Submission | null>(null)
 const suggestion = ref('')
 const judging = ref(false)
+const running = ref(false)
 const aiLoading = ref(false)
 const activeProblemTab = ref('description')
 const activeBottomTab = ref('cases')
+const runResult = ref<{ status: string; runtimeMs: number; message: string; match: boolean } | null>(null)
+const mySubmissions = ref<Submission[]>([])
+const aiHistory = ref<Array<{ suggestion: string; createdAt?: string }>>([])
 
 const schemaTables = computed(() => parseSchema(problem.value?.sampleInput ?? ''))
 const statusTone = computed(() => {
@@ -61,6 +66,7 @@ const requestAiSuggestion = async () => {
       studentSql: sql.value
     })
     suggestion.value = response.suggestion
+    await loadAiHistory()
   } finally {
     aiLoading.value = false
   }
@@ -103,9 +109,44 @@ const formatSql = () => {
   sql.value = value
 }
 
-const runOnly = () => {
-  activeBottomTab.value = 'cases'
-  ElMessage.info('测试运行将使用下方样例数据，请点击提交进行正式判题。')
+const runOnly = async () => {
+  if (!problem.value || !sql.value.trim()) {
+    ElMessage.warning('请先编写 SQL')
+    return
+  }
+  running.value = true
+  activeBottomTab.value = 'result'
+  try {
+    runResult.value = await problemApi.run(problem.value.id, sql.value)
+    if (runResult.value.match) {
+      ElMessage.success('试运行通过，结果与参考答案一致')
+    } else if (runResult.value.status === 'ACCEPTED' || runResult.value.status === 'WRONG_ANSWER') {
+      ElMessage.warning('试运行完成，结果与参考答案不一致')
+    } else {
+      ElMessage.error(runResult.value.message || '试运行未通过')
+    }
+  } catch {
+    ElMessage.error('试运行失败，请稍后重试')
+  } finally {
+    running.value = false
+  }
+}
+
+const resetSql = () => {
+  sql.value = DEFAULT_SQL
+  runResult.value = null
+  ElMessage.info('已重置为初始 SQL')
+}
+
+const loadMySubmissions = async () => {
+  if (!problem.value) return
+  const all = await submissionApi.mine()
+  mySubmissions.value = all.filter((s) => s.problemId === problem.value!.id)
+}
+
+const loadAiHistory = async () => {
+  if (!problem.value) return
+  aiHistory.value = await aiApi.history(problem.value.id)
 }
 
 const goBack = () => {
@@ -122,6 +163,7 @@ function parseSchema(input: string): SchemaTable[] {
 
 onMounted(async () => {
   problem.value = await problemApi.detail(Number(route.params.id ?? 101))
+  await Promise.all([loadMySubmissions(), loadAiHistory()])
 })
 </script>
 
@@ -136,8 +178,8 @@ onMounted(async () => {
         <span class="nav-item">讨论</span>
       </div>
       <div class="topbar-actions">
-        <el-button class="ghost-action" :icon="RefreshRight" text>重置</el-button>
-        <el-button class="run-button" :icon="VideoPlay" :disabled="judging" @click="runOnly">运行</el-button>
+        <el-button class="ghost-action" :icon="RefreshRight" text @click="resetSql">重置</el-button>
+        <el-button class="run-button" :icon="VideoPlay" :loading="running" :disabled="judging" @click="runOnly">运行</el-button>
         <el-button class="submit-button" :icon="Upload" :loading="judging" @click="submit">提交</el-button>
       </div>
     </header>
@@ -194,14 +236,35 @@ onMounted(async () => {
             </section>
           </template>
 
-          <div v-else-if="activeProblemTab === 'solution'" class="empty-state">
-            <el-icon><MagicStick /></el-icon>
-            <span>完成一次提交后，可在判题结果中查看 AI 建议。</span>
+          <div v-else-if="activeProblemTab === 'solution'" class="tab-list">
+            <template v-if="aiHistory.length">
+              <div v-for="(item, index) in aiHistory" :key="index" class="ai-history-item">
+                <div class="ai-history-time">
+                  <el-icon><MagicStick /></el-icon>
+                  <span>{{ item.createdAt || 'AI 建议' }}</span>
+                </div>
+                <p class="ai-history-text">{{ item.suggestion }}</p>
+              </div>
+            </template>
+            <div v-else class="empty-state">
+              <el-icon><MagicStick /></el-icon>
+              <span>完成一次提交后，点击「AI 建议」即可在此查看历史建议。</span>
+            </div>
           </div>
 
-          <div v-else class="empty-state">
-            <el-icon><Operation /></el-icon>
-            <span>本题提交记录会在正式提交后同步更新。</span>
+          <div v-else class="tab-list">
+            <template v-if="mySubmissions.length">
+              <div v-for="item in mySubmissions" :key="item.id" class="submission-item">
+                <StatusTag :status="item.status" />
+                <span class="submission-score">{{ item.score }} 分</span>
+                <span class="submission-runtime">{{ item.runtimeMs }}ms</span>
+                <span class="submission-time">{{ item.submittedAt }}</span>
+              </div>
+            </template>
+            <div v-else class="empty-state">
+              <el-icon><Operation /></el-icon>
+              <span>本题暂无提交记录，正式提交后会同步更新。</span>
+            </div>
           </div>
         </div>
       </section>
@@ -516,6 +579,53 @@ pre {
 
 .empty-state .el-icon {
   font-size: 28px;
+}
+
+.tab-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ai-history-item {
+  padding: 12px 14px;
+  border: 1px solid #2f2f2f;
+  border-radius: 8px;
+  background: #1d1d1d;
+}
+
+.ai-history-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #8f8f8f;
+  margin-bottom: 6px;
+}
+
+.ai-history-text {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #e6e6e6;
+  white-space: pre-wrap;
+}
+
+.submission-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  border: 1px solid #2f2f2f;
+  border-radius: 8px;
+  background: #1d1d1d;
+  font-size: 13px;
+  color: #cfcfcf;
+}
+
+.submission-time {
+  margin-left: auto;
+  color: #8f8f8f;
 }
 
 .coding-pane {

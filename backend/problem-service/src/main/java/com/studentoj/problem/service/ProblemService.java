@@ -1,7 +1,10 @@
 package com.studentoj.problem.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.studentoj.problem.client.SandboxClient;
 import com.studentoj.problem.dto.ProblemResponse;
+import com.studentoj.problem.dto.SandboxExecuteRequest;
+import com.studentoj.problem.dto.SandboxExecuteResponse;
 import com.studentoj.problem.dto.SubmissionCreatedEvent;
 import com.studentoj.problem.dto.SubmissionRequest;
 import com.studentoj.problem.dto.SubmissionResponse;
@@ -28,11 +31,14 @@ public class ProblemService {
     private final ProblemMapper problemMapper;
     private final SubmissionMapper submissionMapper;
     private final SubmissionPublisher publisher;
+    private final SandboxClient sandboxClient;
 
-    public ProblemService(ProblemMapper problemMapper, SubmissionMapper submissionMapper, SubmissionPublisher publisher) {
+    public ProblemService(ProblemMapper problemMapper, SubmissionMapper submissionMapper,
+                          SubmissionPublisher publisher, SandboxClient sandboxClient) {
         this.problemMapper = problemMapper;
         this.submissionMapper = submissionMapper;
         this.publisher = publisher;
+        this.sandboxClient = sandboxClient;
     }
 
     public List<ProblemResponse> list(Long viewerUserId) {
@@ -88,6 +94,22 @@ public class ProblemService {
                 entity.getSubmittedAt().format(TS_FMT),
                 entity.getMessage()
         );
+    }
+
+    /**
+     * 试运行：同步在沙箱中执行学生 SQL（沙箱仍做白名单/危险拦截），与参考答案比对结果，
+     * 不落库、不进 MQ。用于编辑器「运行」按钮，给学生即时反馈。
+     */
+    public SandboxExecuteResponse trialRun(Long problemId, String sqlContent) {
+        if (problemId == null || sqlContent == null || sqlContent.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "运行内容不完整");
+        }
+        ProblemEntity problem = problemMapper.selectById(problemId);
+        if (problem == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "题目不存在");
+        }
+        return sandboxClient.execute(
+                new SandboxExecuteRequest(problem.getInitSql(), problem.getAnswerSql(), sqlContent));
     }
 
     public List<SubmissionResponse> recent(String groupName, Long studentId) {

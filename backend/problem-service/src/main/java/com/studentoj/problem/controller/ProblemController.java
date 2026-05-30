@@ -4,6 +4,7 @@ import com.studentoj.common.auth.AuthContext;
 import com.studentoj.common.auth.RequireRole;
 import com.studentoj.common.auth.Role;
 import com.studentoj.problem.dto.ProblemResponse;
+import com.studentoj.problem.dto.SandboxExecuteResponse;
 import com.studentoj.problem.dto.SubmissionRequest;
 import com.studentoj.problem.dto.SubmissionResponse;
 import com.studentoj.problem.service.ProblemService;
@@ -40,6 +41,12 @@ public class ProblemController {
     @RequireRole(Role.STUDENT)
     public SubmissionResponse submit(@RequestBody SubmissionRequest request) {
         return problemService.submit(new SubmissionRequest(AuthContext.userId(), request.problemId(), request.sqlContent()));
+    }
+
+    @PostMapping("/api/submission/run")
+    @RequireRole(Role.STUDENT)
+    public SandboxExecuteResponse run(@RequestBody SubmissionRequest request) {
+        return problemService.trialRun(request.problemId(), request.sqlContent());
     }
 
     @GetMapping("/api/submission/list")
