@@ -8,7 +8,7 @@
 - 后端：Java 21、Spring Boot 3、MyBatis Plus
 - 基础设施：MySQL、Redis、RabbitMQ、Docker、Nginx
 - 监控：Prometheus、Grafana、Spring Boot Actuator
-- AI：OpenAI API
+- AI：DeepSeek 大模型（OpenAI 兼容接口），未配置密钥时自动回退规则生成器
 
 ## 项目结构
 

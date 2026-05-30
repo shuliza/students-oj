@@ -128,8 +128,10 @@ services:
         SERVICE_NAME: ai-service
     environment:
       <<: *backend-env
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      STUDENTOJ_AI_MODE: rule
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      DEEPSEEK_BASE_URL: ${DEEPSEEK_BASE_URL:-https://api.deepseek.com}
+      DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-deepseek-chat}
+      STUDENTOJ_AI_MODE: ${STUDENTOJ_AI_MODE:-auto}
     depends_on:
       mysql:
         condition: service_healthy
