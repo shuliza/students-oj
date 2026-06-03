@@ -37,16 +37,27 @@ public class ProblemController {
         return problemService.detail(id, AuthContext.userId());
     }
 
+    @GetMapping("/api/sql-problems/{id}")
+    public ProblemResponse sqlProblemDetail(@PathVariable("id") Long id) {
+        return problemService.detail(id, AuthContext.userId());
+    }
+
     @PostMapping("/api/submission/judge")
     @RequireRole(Role.STUDENT)
     public SubmissionResponse submit(@RequestBody SubmissionRequest request) {
         return problemService.submit(new SubmissionRequest(AuthContext.userId(), request.problemId(), request.sqlContent()));
     }
 
+    @PostMapping("/api/sql-judge/submit")
+    @RequireRole(Role.STUDENT)
+    public SubmissionResponse sqlJudgeSubmit(@RequestBody SubmissionRequest request) {
+        return submit(request);
+    }
+
     @PostMapping("/api/submission/run")
     @RequireRole(Role.STUDENT)
     public SandboxExecuteResponse run(@RequestBody SubmissionRequest request) {
-        return problemService.trialRun(request.problemId(), request.sqlContent());
+        return problemService.trialRun(AuthContext.userId(), request.problemId(), request.sqlContent());
     }
 
     @GetMapping("/api/submission/list")
@@ -63,6 +74,12 @@ public class ProblemController {
         return problemService.mine(AuthContext.userId());
     }
 
+    @GetMapping("/api/sql-judge/history")
+    @RequireRole(Role.STUDENT)
+    public List<SubmissionResponse> sqlJudgeHistory() {
+        return problemService.mine(AuthContext.userId());
+    }
+
     @GetMapping("/api/submission/{id}")
     @RequireRole({Role.STUDENT, Role.TEACHER})
     public SubmissionResponse one(@PathVariable("id") Long id) {
@@ -71,5 +88,11 @@ public class ProblemController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No permission to access this submission");
         }
         return submission;
+    }
+
+    @GetMapping("/api/sql-judge/history/{id}")
+    @RequireRole({Role.STUDENT, Role.TEACHER})
+    public SubmissionResponse sqlJudgeHistoryOne(@PathVariable("id") Long id) {
+        return one(id);
     }
 }

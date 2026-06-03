@@ -9,7 +9,7 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
       - ./deploy/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_ai_ci"]
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_ai_ci", "--max-connections=300"]
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
       interval: 5s
@@ -38,6 +38,7 @@ services:
       retries: 20
 
   auth-service:
+    image: student-oj-auth-service:${STUDENTOJ_IMAGE_TAG:-0.1.0}
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -67,6 +68,7 @@ services:
       - "8081:8081"
 
   problem-service:
+    image: student-oj-problem-service:${STUDENTOJ_IMAGE_TAG:-0.1.0}
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -86,6 +88,7 @@ services:
       - "8082:8082"
 
   judge-service:
+    image: student-oj-judge-service:${STUDENTOJ_IMAGE_TAG:-0.1.0}
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -105,6 +108,7 @@ services:
       - "8083:8083"
 
   sandbox-service:
+    image: student-oj-sandbox-service:${STUDENTOJ_IMAGE_TAG:-0.1.0}
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -124,6 +128,7 @@ services:
       - "8084:8084"
 
   ai-service:
+    image: student-oj-ai-service:${STUDENTOJ_IMAGE_TAG:-0.1.0}
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -144,6 +149,7 @@ services:
       - "8085:8085"
 
   statistics-service:
+    image: student-oj-statistics-service:${STUDENTOJ_IMAGE_TAG:-0.1.0}
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -160,6 +166,7 @@ services:
       - "8086:8086"
 
   teacher-service:
+    image: student-oj-teacher-service:${STUDENTOJ_IMAGE_TAG:-0.1.0}
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -175,7 +182,28 @@ services:
     ports:
       - "8087:8087"
 
+  leetcode-crawler:
+    image: student-oj-leetcode-crawler:${STUDENTOJ_IMAGE_TAG:-0.1.0}
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: leetcode-crawler
+    environment:
+      <<: *backend-env
+      LEETCODE_CRAWLER_ENABLED: ${LEETCODE_CRAWLER_ENABLED:-true}
+      LEETCODE_GRAPHQL_URL: ${LEETCODE_GRAPHQL_URL:-https://leetcode.cn/graphql}
+      LEETCODE_BASE_URL: ${LEETCODE_BASE_URL:-https://leetcode.cn}
+      LEETCODE_COOKIE: ${LEETCODE_COOKIE:-}
+      LEETCODE_SYNC_ON_STARTUP: ${LEETCODE_SYNC_ON_STARTUP:-false}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8088:8088"
+
   web:
+    image: student-oj-web:${STUDENTOJ_IMAGE_TAG:-0.1.0}
     build:
       context: .
       dockerfile: Dockerfile

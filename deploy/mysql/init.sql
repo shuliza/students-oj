@@ -82,7 +82,10 @@ CREATE TABLE IF NOT EXISTS submission (
   PRIMARY KEY (id),
   KEY idx_submission_user (user_id),
   KEY idx_submission_problem (problem_id),
-  KEY idx_submission_time (submitted_at)
+  KEY idx_submission_time (submitted_at),
+  KEY idx_submission_user_problem_status_time (user_id, problem_id, status, submitted_at),
+  KEY idx_submission_problem_status_user (problem_id, status, user_id),
+  KEY idx_submission_user_time (user_id, submitted_at)
 );
 
 CREATE TABLE IF NOT EXISTS student_activity (
@@ -93,6 +96,12 @@ CREATE TABLE IF NOT EXISTS student_activity (
   accepted_count   INT        NOT NULL DEFAULT 0,
   PRIMARY KEY (id),
   UNIQUE KEY uk_user_date (user_id, activity_date)
+);
+
+CREATE TABLE IF NOT EXISTS processed_judge_event (
+  submission_id BIGINT   NOT NULL,
+  processed_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (submission_id)
 );
 
 CREATE TABLE IF NOT EXISTS ai_suggestion (
@@ -107,6 +116,188 @@ CREATE TABLE IF NOT EXISTS ai_suggestion (
   KEY idx_ai_submission (submission_id)
 );
 
+CREATE TABLE IF NOT EXISTS sql_problem (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255),
+    title_slug VARCHAR(255) UNIQUE,
+    difficulty VARCHAR(20),
+    content LONGTEXT,
+    content_text LONGTEXT,
+    example LONGTEXT,
+    schema_info LONGTEXT,
+    sample_data LONGTEXT,
+    expected_output LONGTEXT,
+    test_cases LONGTEXT,
+    hint LONGTEXT,
+    tags VARCHAR(500),
+    source VARCHAR(50),
+    source_url VARCHAR(500),
+    create_time DATETIME,
+    update_time DATETIME,
+    KEY idx_sql_problem_difficulty (difficulty),
+    KEY idx_sql_problem_source (source),
+    KEY idx_sql_problem_update_time (update_time)
+);
+
+CREATE TABLE IF NOT EXISTS sql_problem_answer (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    problem_id BIGINT NOT NULL,
+    answer_sql LONGTEXT,
+    create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    KEY idx_sql_problem_answer_problem (problem_id)
+);
+
+CREATE TABLE IF NOT EXISTS sql_problem_testcase (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    problem_id BIGINT NOT NULL,
+    case_name VARCHAR(255),
+    schema_sql LONGTEXT,
+    init_sql LONGTEXT,
+    expected_sql LONGTEXT,
+    expected_result LONGTEXT,
+    create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    KEY idx_sql_problem_testcase_problem (problem_id)
+);
+
+CREATE TABLE IF NOT EXISTS sql_submission (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT,
+    problem_id BIGINT,
+    submit_sql LONGTEXT,
+    status VARCHAR(50),
+    execute_time BIGINT,
+    result_message TEXT,
+    create_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    KEY idx_sql_submission_user (user_id),
+    KEY idx_sql_submission_problem (problem_id),
+    KEY idx_sql_submission_time (create_time)
+);
+
+DROP TRIGGER IF EXISTS trg_sql_problem_after_insert;
+DROP TRIGGER IF EXISTS trg_sql_problem_after_update;
+DROP TRIGGER IF EXISTS trg_sql_problem_after_delete;
+DROP TRIGGER IF EXISTS trg_sql_problem_answer_after_insert;
+DROP TRIGGER IF EXISTS trg_sql_problem_answer_after_update;
+DROP TRIGGER IF EXISTS trg_sql_problem_answer_after_delete;
+DELIMITER //
+CREATE TRIGGER trg_sql_problem_after_insert
+AFTER INSERT ON sql_problem
+FOR EACH ROW
+BEGIN
+  INSERT INTO problem(id, title, description, difficulty, tags, init_sql, answer_sql, sample_input, sample_output, status, created_at, updated_at)
+  SELECT
+    200000 + NEW.id,
+    LEFT(NEW.title, 128),
+    COALESCE(NULLIF(NEW.content, ''), NEW.content_text, ''),
+    CASE UPPER(NEW.difficulty)
+      WHEN 'EASY' THEN 'EASY'
+      WHEN 'MEDIUM' THEN 'MEDIUM'
+      WHEN 'HARD' THEN 'HARD'
+      ELSE 'EASY'
+    END,
+    LEFT(COALESCE(NEW.tags, 'Database'), 255),
+    COALESCE(NULLIF(NEW.schema_info, ''), NULLIF(NEW.sample_data, ''), ''),
+    (SELECT a.answer_sql FROM sql_problem_answer a WHERE a.problem_id = NEW.id ORDER BY a.id DESC LIMIT 1),
+    COALESCE(NULLIF(NEW.schema_info, ''), NULLIF(NEW.sample_data, ''), ''),
+    COALESCE(NEW.expected_output, ''),
+    1,
+    COALESCE(NEW.create_time, NOW()),
+    COALESCE(NEW.update_time, NOW())
+  WHERE NOT EXISTS (SELECT 1 FROM problem p WHERE p.id = 200000 + NEW.id OR p.title = NEW.title);
+END//
+CREATE TRIGGER trg_sql_problem_after_update
+AFTER UPDATE ON sql_problem
+FOR EACH ROW
+BEGIN
+  UPDATE problem
+  SET title = LEFT(NEW.title, 128),
+      description = COALESCE(NULLIF(NEW.content, ''), NEW.content_text, ''),
+      difficulty = CASE UPPER(NEW.difficulty)
+        WHEN 'EASY' THEN 'EASY'
+        WHEN 'MEDIUM' THEN 'MEDIUM'
+        WHEN 'HARD' THEN 'HARD'
+        ELSE 'EASY'
+      END,
+      tags = LEFT(COALESCE(NEW.tags, 'Database'), 255),
+      init_sql = COALESCE(NULLIF(NEW.schema_info, ''), NULLIF(NEW.sample_data, ''), ''),
+      answer_sql = COALESCE(
+        (SELECT a.answer_sql FROM sql_problem_answer a WHERE a.problem_id = NEW.id ORDER BY a.id DESC LIMIT 1),
+        answer_sql
+      ),
+      sample_input = COALESCE(NULLIF(NEW.schema_info, ''), NULLIF(NEW.sample_data, ''), ''),
+      sample_output = COALESCE(NEW.expected_output, ''),
+      updated_at = COALESCE(NEW.update_time, NOW())
+  WHERE id = 200000 + NEW.id;
+END//
+CREATE TRIGGER trg_sql_problem_after_delete
+AFTER DELETE ON sql_problem
+FOR EACH ROW
+BEGIN
+  DELETE FROM problem WHERE id = 200000 + OLD.id;
+END//
+CREATE TRIGGER trg_sql_problem_answer_after_insert
+AFTER INSERT ON sql_problem_answer
+FOR EACH ROW
+BEGIN
+  UPDATE problem
+  SET answer_sql = NEW.answer_sql,
+      updated_at = NOW()
+  WHERE id = 200000 + NEW.problem_id;
+END//
+CREATE TRIGGER trg_sql_problem_answer_after_update
+AFTER UPDATE ON sql_problem_answer
+FOR EACH ROW
+BEGIN
+  UPDATE problem
+  SET answer_sql = NEW.answer_sql,
+      updated_at = NOW()
+  WHERE id = 200000 + NEW.problem_id;
+END//
+CREATE TRIGGER trg_sql_problem_answer_after_delete
+AFTER DELETE ON sql_problem_answer
+FOR EACH ROW
+BEGIN
+  UPDATE problem
+  SET answer_sql = (
+        SELECT a.answer_sql
+        FROM sql_problem_answer a
+        WHERE a.problem_id = OLD.problem_id
+        ORDER BY a.id DESC
+        LIMIT 1
+      ),
+      updated_at = NOW()
+  WHERE id = 200000 + OLD.problem_id;
+END//
+DELIMITER ;
+
+INSERT INTO sql_problem_answer(problem_id, answer_sql)
+SELECT 23, 'WITH high_traffic AS (
+  SELECT id, visit_date, people, id - ROW_NUMBER() OVER (ORDER BY id) AS streak_key
+  FROM Stadium
+  WHERE people >= 100
+)
+SELECT id, visit_date, people
+FROM high_traffic
+WHERE streak_key IN (
+  SELECT streak_key
+  FROM high_traffic
+  GROUP BY streak_key
+  HAVING COUNT(*) >= 3
+)
+ORDER BY visit_date'
+WHERE EXISTS (SELECT 1 FROM sql_problem p WHERE p.id = 23 AND p.title_slug = 'human-traffic-of-stadium')
+  AND NOT EXISTS (SELECT 1 FROM sql_problem_answer a WHERE a.problem_id = 23);
+
+UPDATE problem p
+JOIN sql_problem sp ON p.id = 200000 + sp.id
+LEFT JOIN sql_problem_answer a ON a.problem_id = sp.id
+SET p.init_sql = COALESCE(NULLIF(sp.schema_info, ''), NULLIF(sp.sample_data, ''), p.init_sql),
+    p.answer_sql = COALESCE(a.answer_sql, p.answer_sql),
+    p.sample_input = COALESCE(NULLIF(sp.schema_info, ''), NULLIF(sp.sample_data, ''), p.sample_input),
+    p.sample_output = COALESCE(sp.expected_output, p.sample_output),
+    p.updated_at = NOW()
+WHERE p.id >= 200000;
 -- 班级
 INSERT INTO class_group(id, name, teacher_name, description, student_count) VALUES
   (1, '数据库 1 班', '王老师', '周一 1-2 节实验班',     6),
@@ -197,4 +388,5 @@ USE student_oj_sandbox;
 
 CREATE USER IF NOT EXISTS 'sandbox'@'%' IDENTIFIED BY 'sandbox123';
 GRANT ALL PRIVILEGES ON student_oj_sandbox.* TO 'sandbox'@'%';
+GRANT ALL PRIVILEGES ON `oj\_run\_%`.* TO 'sandbox'@'%';
 FLUSH PRIVILEGES;

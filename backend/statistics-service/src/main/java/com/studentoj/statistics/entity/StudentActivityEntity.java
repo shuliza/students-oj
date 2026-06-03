@@ -12,6 +12,7 @@ public class StudentActivityEntity {
     private Long userId;
     private LocalDate activityDate;
     private Integer submissionCount;
+    private Integer acceptedCount;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -21,4 +22,6 @@ public class StudentActivityEntity {
     public void setActivityDate(LocalDate activityDate) { this.activityDate = activityDate; }
     public Integer getSubmissionCount() { return submissionCount; }
     public void setSubmissionCount(Integer submissionCount) { this.submissionCount = submissionCount; }
+    public Integer getAcceptedCount() { return acceptedCount; }
+    public void setAcceptedCount(Integer acceptedCount) { this.acceptedCount = acceptedCount; }
 }

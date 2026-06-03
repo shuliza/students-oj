@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Profile("!test")
@@ -22,14 +23,20 @@ public class JudgeEventListener {
     }
 
     @RabbitListener(queues = "${studentoj.mq.statistics-queue}")
+    @Transactional
     public void onJudgeFinished(JudgeFinishedEvent event) {
-        if (event == null || event.userId() == null || event.userId() <= 0) {
+        if (event == null || event.submissionId() == null || event.userId() == null || event.userId() <= 0) {
             return;
         }
         try {
-            activityMapper.upsertIncrement(event.userId(), LocalDate.now());
+            if (activityMapper.markProcessed(event.submissionId()) == 0) {
+                return;
+            }
+            int acceptedCount = "ACCEPTED".equals(event.status()) ? 1 : 0;
+            activityMapper.upsertIncrement(event.userId(), LocalDate.now(), acceptedCount);
         } catch (Exception e) {
             log.warn("Failed to upsert activity for user {}: {}", event.userId(), e.getMessage());
+            throw e;
         }
     }
 }

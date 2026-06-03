@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -32,17 +33,25 @@ public class ProblemService {
     private final SubmissionMapper submissionMapper;
     private final SubmissionPublisher publisher;
     private final SandboxClient sandboxClient;
+    private final RunRateLimiter runRateLimiter;
+    private volatile CacheEntry<List<ProblemEntity>> activeProblemsCache;
+    private volatile CacheEntry<Map<Long, Map<String, Object>>> statsCache;
+
+    @Value("${studentoj.problem.cache-ttl-ms:15000}")
+    private long problemCacheTtlMs;
 
     public ProblemService(ProblemMapper problemMapper, SubmissionMapper submissionMapper,
-                          SubmissionPublisher publisher, SandboxClient sandboxClient) {
+                          SubmissionPublisher publisher, SandboxClient sandboxClient,
+                          RunRateLimiter runRateLimiter) {
         this.problemMapper = problemMapper;
         this.submissionMapper = submissionMapper;
         this.publisher = publisher;
         this.sandboxClient = sandboxClient;
+        this.runRateLimiter = runRateLimiter;
     }
 
     public List<ProblemResponse> list(Long viewerUserId) {
-        List<ProblemEntity> problems = problemMapper.selectList(new QueryWrapper<ProblemEntity>().eq("status", 1).orderByAsc("id"));
+        List<ProblemEntity> problems = activeProblems();
         Map<Long, Map<String, Object>> stats = indexStats();
         Map<Long, Integer> userState = userStateMap(viewerUserId);
 
@@ -100,7 +109,12 @@ public class ProblemService {
      * 试运行：同步在沙箱中执行学生 SQL（沙箱仍做白名单/危险拦截），与参考答案比对结果，
      * 不落库、不进 MQ。用于编辑器「运行」按钮，给学生即时反馈。
      */
-    public SandboxExecuteResponse trialRun(Long problemId, String sqlContent) {
+    public SandboxExecuteResponse trialRun(Long userId, Long problemId, String sqlContent) {
+        if (!runRateLimiter.tryAcquire(userId)) {
+            long retryMs = runRateLimiter.retryAfter(userId).toMillis();
+            throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
+                    "Run too frequently. Please retry after " + retryMs + " ms.");
+        }
         if (problemId == null || sqlContent == null || sqlContent.isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "运行内容不完整");
         }
@@ -194,10 +208,27 @@ public class ProblemService {
     }
 
     private Map<Long, Map<String, Object>> indexStats() {
-        return problemMapper.selectStats().stream().collect(Collectors.toMap(
+        CacheEntry<Map<Long, Map<String, Object>>> cached = statsCache;
+        if (cached != null && !cached.expired()) {
+            return cached.value();
+        }
+        Map<Long, Map<String, Object>> fresh = problemMapper.selectStats().stream().collect(Collectors.toMap(
                 row -> ((Number) row.get("problem_id")).longValue(),
                 row -> row
         ));
+        statsCache = new CacheEntry<>(fresh, System.currentTimeMillis() + Math.max(0, problemCacheTtlMs));
+        return fresh;
+    }
+
+    private List<ProblemEntity> activeProblems() {
+        CacheEntry<List<ProblemEntity>> cached = activeProblemsCache;
+        if (cached != null && !cached.expired()) {
+            return cached.value();
+        }
+        List<ProblemEntity> fresh = problemMapper.selectList(
+                new QueryWrapper<ProblemEntity>().eq("status", 1).orderByAsc("id"));
+        activeProblemsCache = new CacheEntry<>(List.copyOf(fresh), System.currentTimeMillis() + Math.max(0, problemCacheTtlMs));
+        return fresh;
     }
 
     private Map<Long, Integer> userStateMap(Long userId) {
@@ -208,5 +239,11 @@ public class ProblemService {
                 row -> ((Number) row.get("problem_id")).longValue(),
                 row -> ((Number) row.get("best_state")).intValue()
         ));
+    }
+
+    private record CacheEntry<T>(T value, long expiresAt) {
+        boolean expired() {
+            return System.currentTimeMillis() >= expiresAt;
+        }
     }
 }

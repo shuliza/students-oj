@@ -2,18 +2,27 @@ package com.studentoj.sandbox.service;
 
 import com.studentoj.sandbox.dto.SandboxExecuteRequest;
 import com.studentoj.sandbox.dto.SandboxExecuteResponse;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.SQLTimeoutException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.regex.Matcher;
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import javax.sql.DataSource;
+import jakarta.annotation.PostConstruct;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.StatementVisitorAdapter;
+import net.sf.jsqlparser.statement.select.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,141 +34,246 @@ public class SandboxService {
     private static final Logger log = LoggerFactory.getLogger(SandboxService.class);
 
     private static final Pattern DANGEROUS = Pattern.compile(
-            "\\b(drop|truncate|alter|grant|revoke|shutdown|create\\s+user|set\\s+password|load_file|outfile|sleep\\s*\\(|benchmark\\s*\\()\\b",
+            "\\b(drop|delete|truncate|alter|grant|revoke|shutdown|create\\s+database|create\\s+user|set\\s+password|load\\s+data|outfile|load_file|sleep\\s*\\(|benchmark\\s*\\()\\b",
             Pattern.CASE_INSENSITIVE);
-
-    private static final Pattern TEMPORARY_TABLE = Pattern.compile(
-            "(?i)^create\\s+temporary\\s+table\\s+(`?[a-zA-Z0-9_]+`?(?:\\.`?[a-zA-Z0-9_]+`?)?)(?=\\s|\\()");
 
     private final DataSource dataSource;
 
-    @Value("${studentoj.sandbox.query-timeout-seconds:5}")
+    @Value("${studentoj.sandbox.query-timeout-seconds:3}")
     private int queryTimeoutSeconds;
 
     @Value("${studentoj.sandbox.max-rows:5000}")
     private int maxRows;
 
+    @Value("${studentoj.sandbox.max-concurrent-executions:16}")
+    private int maxConcurrentExecutions;
+
+    @Value("${studentoj.sandbox.acquire-timeout-ms:1500}")
+    private long acquireTimeoutMs;
+
     public SandboxService(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
+    private Semaphore executionSlots;
+
+    @PostConstruct
+    void initConcurrencyLimiter() {
+        executionSlots = new Semaphore(Math.max(1, maxConcurrentExecutions));
+    }
+
     public SandboxExecuteResponse execute(SandboxExecuteRequest request) {
-        if (request == null || request.studentSql() == null || request.studentSql().isBlank()) {
-            return new SandboxExecuteResponse("RUNTIME_ERROR", 0, "学生 SQL 不能为空", false);
+        boolean acquired = false;
+        try {
+            acquired = executionSlots.tryAcquire(Math.max(0, acquireTimeoutMs), TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return response("RUNTIME_ERROR", 0, "Sandbox execution interrupted.", false, null);
         }
-        String studentSql = request.studentSql().trim();
-        if (!startsWithSelect(studentSql)) {
-            return new SandboxExecuteResponse("WRONG_ANSWER", 0, "仅允许 SELECT 查询语句", false);
+        if (!acquired) {
+            return response("SYSTEM_BUSY", 0, "Sandbox is busy. Please retry later.", false, null);
         }
-        if (DANGEROUS.matcher(studentSql).find()) {
-            return new SandboxExecuteResponse("WRONG_ANSWER", 0, "检测到危险关键字，已拒绝执行", false);
+        try {
+            return executeInternal(request);
+        } finally {
+            executionSlots.release();
+        }
+    }
+
+    private SandboxExecuteResponse executeInternal(SandboxExecuteRequest request) {
+        if (request == null || isBlank(request.studentSql())) {
+            return response("RUNTIME_ERROR", 0, "Student SQL must not be empty.", false, null);
+        }
+        if (isBlank(request.answerSql())) {
+            return response("RUNTIME_ERROR", 0, "Reference answer SQL is missing.", false, null);
         }
 
-        try (Connection conn = dataSource.getConnection()) {
-            conn.setAutoCommit(false);
-            try {
-                runInitSql(conn, request.initSql());
+        String studentSql = trimTrailingSemicolon(request.studentSql());
+        String validationError = validateStudentSql(studentSql);
+        if (validationError != null) {
+            return response("RUNTIME_ERROR", 0, validationError, false, null);
+        }
 
-                long t0 = System.currentTimeMillis();
-                List<List<Object>> studentRows = runQuery(conn, studentSql);
-                long runtime = System.currentTimeMillis() - t0;
+        String databaseName = "oj_run_" + UUID.randomUUID().toString().replace("-", "");
+        long started = System.currentTimeMillis();
+        try (Connection admin = dataSource.getConnection()) {
+            createDatabase(admin, databaseName);
+            try (Connection runConnection = dataSource.getConnection()) {
+                runConnection.setCatalog(databaseName);
+                runConnection.setAutoCommit(false);
+                executeSqlScript(runConnection, request.initSql());
 
-                List<List<Object>> answerRows = runQuery(conn, request.answerSql());
+                QueryResult studentResult = runQuery(runConnection, studentSql);
+                QueryResult expectedResult = runQuery(runConnection, request.answerSql());
+                int runtime = Math.toIntExact(Math.min(Integer.MAX_VALUE, System.currentTimeMillis() - started));
 
-                boolean match = compareRows(studentRows, answerRows);
-                String status = match ? "ACCEPTED" : "WRONG_ANSWER";
-                String message = match
-                        ? "结果集与参考答案一致"
-                        : String.format("结果不匹配：你的结果 %d 行，参考结果 %d 行", studentRows.size(), answerRows.size());
-                return new SandboxExecuteResponse(status, (int) runtime, message, match);
-            } finally {
-                try {
-                    conn.rollback();
-                } catch (SQLException ignored) {
+                boolean match = compare(studentResult, expectedResult);
+                if (match) {
+                    return response("ACCEPTED", runtime, "Accepted.", true, studentResult);
                 }
+                String message = "Wrong answer. Your result has " + studentResult.rows().size()
+                        + " row(s), expected " + expectedResult.rows().size() + " row(s).";
+                return response("WRONG_ANSWER", runtime, message, false, studentResult);
+            } finally {
+                dropDatabaseQuietly(admin, databaseName);
             }
+        } catch (SQLTimeoutException e) {
+            log.warn("Sandbox query timeout: {}", e.getMessage());
+            return response("TIME_LIMIT_EXCEEDED", queryTimeoutSeconds * 1000, "Query timed out.", false, null);
         } catch (SQLException e) {
             log.warn("Sandbox SQL error: {}", e.getMessage());
-            String status = "0".equals(String.valueOf(e.getSQLState())) ? "TIME_LIMIT_EXCEEDED" : "RUNTIME_ERROR";
-            return new SandboxExecuteResponse(status, 0, "SQL 执行失败: " + e.getMessage(), false);
+            return response("RUNTIME_ERROR", 0, "SQL execution failed: " + e.getMessage(), false, null);
         } catch (Exception e) {
             log.error("Sandbox unexpected error", e);
-            return new SandboxExecuteResponse("RUNTIME_ERROR", 0, "沙箱执行异常: " + e.getMessage(), false);
+            return response("RUNTIME_ERROR", 0, "Sandbox execution failed: " + e.getMessage(), false, null);
         }
     }
 
-    private boolean startsWithSelect(String sql) {
-        String lower = sql.toLowerCase();
-        return lower.startsWith("select") || lower.startsWith("with") || lower.startsWith("(select");
+    private String validateStudentSql(String sql) {
+        if (DANGEROUS.matcher(sql).find()) {
+            return "Dangerous SQL keyword detected.";
+        }
+        try {
+            var statements = CCJSqlParserUtil.parseStatements(sql).getStatements();
+            if (statements.size() != 1) {
+                return "Only one SQL statement is allowed.";
+            }
+            final boolean[] select = {false};
+            statements.get(0).accept(new StatementVisitorAdapter() {
+                @Override
+                public void visit(Select statement) {
+                    select[0] = true;
+                }
+            });
+            return select[0] ? null : "Only SELECT/WITH queries are allowed.";
+        } catch (Exception e) {
+            return "SQL parse failed: " + e.getMessage();
+        }
     }
 
-    private void runInitSql(Connection conn, String initSql) throws SQLException {
-        if (initSql == null || initSql.isBlank()) {
+    private void createDatabase(Connection conn, String databaseName) throws SQLException {
+        try (Statement statement = conn.createStatement()) {
+            statement.execute("CREATE DATABASE `" + databaseName + "` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci");
+        }
+    }
+
+    private void dropDatabaseQuietly(Connection conn, String databaseName) {
+        try (Statement statement = conn.createStatement()) {
+            statement.execute("DROP DATABASE IF EXISTS `" + databaseName + "`");
+        } catch (Exception e) {
+            log.warn("Failed to drop sandbox database {}: {}", databaseName, e.getMessage());
+        }
+    }
+
+    private void executeSqlScript(Connection conn, String sqlScript) throws SQLException {
+        if (isBlank(sqlScript)) {
             return;
         }
-        try (Statement stmt = conn.createStatement()) {
-            stmt.setQueryTimeout(queryTimeoutSeconds);
-            for (String piece : initSql.split(";")) {
-                String s = toTemporaryTableSql(piece.trim());
-                if (s.isEmpty()) {
-                    continue;
+        try (Statement statement = conn.createStatement()) {
+            statement.setQueryTimeout(queryTimeoutSeconds);
+            for (String piece : splitStatements(sqlScript)) {
+                String sql = piece.trim();
+                if (!sql.isEmpty()) {
+                    statement.execute(sql);
                 }
-                String temporaryTable = temporaryTableName(s);
-                if (temporaryTable != null) {
-                    stmt.execute("DROP TEMPORARY TABLE IF EXISTS " + temporaryTable);
-                }
-                stmt.execute(s);
             }
         }
     }
 
-    private String toTemporaryTableSql(String sql) {
-        return sql.replaceFirst("(?i)^create\\s+table\\s+(if\\s+not\\s+exists\\s+)?", "CREATE TEMPORARY TABLE ");
-    }
-
-    private String temporaryTableName(String sql) {
-        Matcher matcher = TEMPORARY_TABLE.matcher(sql);
-        return matcher.find() ? matcher.group(1) : null;
-    }
-
-    private List<List<Object>> runQuery(Connection conn, String sql) throws SQLException {
-        if (sql == null || sql.isBlank()) {
-            return List.of();
-        }
-        try (Statement stmt = conn.createStatement()) {
-            stmt.setQueryTimeout(queryTimeoutSeconds);
-            stmt.setMaxRows(maxRows);
-            try (ResultSet rs = stmt.executeQuery(sql.trim())) {
+    private QueryResult runQuery(Connection conn, String sql) throws SQLException {
+        try (Statement statement = conn.createStatement()) {
+            statement.setQueryTimeout(queryTimeoutSeconds);
+            statement.setMaxRows(maxRows);
+            try (ResultSet rs = statement.executeQuery(trimTrailingSemicolon(sql))) {
                 ResultSetMetaData meta = rs.getMetaData();
-                int cols = meta.getColumnCount();
-                List<List<Object>> rows = new ArrayList<>();
+                int count = meta.getColumnCount();
+                List<String> columns = new ArrayList<>(count);
+                for (int i = 1; i <= count; i++) {
+                    String label = meta.getColumnLabel(i);
+                    columns.add(label == null || label.isBlank() ? meta.getColumnName(i) : label);
+                }
+
+                List<Map<String, Object>> rows = new ArrayList<>();
                 while (rs.next()) {
-                    List<Object> row = new ArrayList<>(cols);
-                    for (int i = 1; i <= cols; i++) {
-                        row.add(rs.getObject(i));
+                    Map<String, Object> row = new LinkedHashMap<>();
+                    for (int i = 1; i <= count; i++) {
+                        row.put(columns.get(i - 1), normalizeValue(rs.getObject(i)));
                     }
                     rows.add(row);
                 }
-                return rows;
+                return new QueryResult(columns, rows);
             }
         }
     }
 
-    private boolean compareRows(List<List<Object>> a, List<List<Object>> b) {
-        if (a.size() != b.size()) {
+    private boolean compare(QueryResult actual, QueryResult expected) {
+        if (!actual.columns().equals(expected.columns())) {
             return false;
         }
-        List<String> sa = a.stream().map(this::normalizeRow).sorted().toList();
-        List<String> sb = b.stream().map(this::normalizeRow).sorted().toList();
-        return sa.equals(sb);
+        if (actual.rows().size() != expected.rows().size()) {
+            return false;
+        }
+        for (int i = 0; i < actual.rows().size(); i++) {
+            if (!actual.rows().get(i).equals(expected.rows().get(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    private String normalizeRow(List<Object> row) {
-        String[] parts = new String[row.size()];
-        for (int i = 0; i < row.size(); i++) {
-            Object o = row.get(i);
-            parts[i] = o == null ? "<null>" : Objects.toString(o).trim();
+    private Object normalizeValue(Object value) {
+        if (value instanceof BigDecimal decimal) {
+            return decimal.stripTrailingZeros().toPlainString();
         }
-        return String.join("", Arrays.asList(parts));
+        if (value instanceof Number number) {
+            return new BigDecimal(number.toString()).stripTrailingZeros().toPlainString();
+        }
+        return value;
+    }
+
+    private List<String> splitStatements(String sqlScript) {
+        List<String> statements = new ArrayList<>();
+        StringBuilder current = new StringBuilder();
+        boolean singleQuoted = false;
+        boolean doubleQuoted = false;
+        for (int i = 0; i < sqlScript.length(); i++) {
+            char ch = sqlScript.charAt(i);
+            if (ch == '\'' && !doubleQuoted) {
+                singleQuoted = !singleQuoted;
+            } else if (ch == '"' && !singleQuoted) {
+                doubleQuoted = !doubleQuoted;
+            }
+            if (ch == ';' && !singleQuoted && !doubleQuoted) {
+                statements.add(current.toString());
+                current.setLength(0);
+            } else {
+                current.append(ch);
+            }
+        }
+        if (!current.isEmpty()) {
+            statements.add(current.toString());
+        }
+        return statements;
+    }
+
+    private SandboxExecuteResponse response(String status, int runtimeMs, String message, boolean match, QueryResult result) {
+        List<String> columns = result == null ? List.of() : result.columns();
+        List<Map<String, Object>> rows = result == null ? List.of() : result.rows();
+        return new SandboxExecuteResponse(status, runtimeMs, message, match, columns, rows);
+    }
+
+    private String trimTrailingSemicolon(String sql) {
+        String trimmed = Objects.toString(sql, "").trim();
+        while (trimmed.endsWith(";")) {
+            trimmed = trimmed.substring(0, trimmed.length() - 1).trim();
+        }
+        return trimmed;
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
+    private record QueryResult(List<String> columns, List<Map<String, Object>> rows) {
     }
 }
