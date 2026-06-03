@@ -8,8 +8,10 @@ import com.studentoj.judge.dto.SandboxExecuteRequest;
 import com.studentoj.judge.dto.SandboxExecuteResponse;
 import com.studentoj.judge.entity.ProblemEntity;
 import com.studentoj.judge.entity.ProblemTestcaseEntity;
+import com.studentoj.judge.entity.SubmissionEntity;
 import com.studentoj.judge.mapper.ProblemMapper;
 import com.studentoj.judge.mapper.ProblemTestcaseMapper;
+import com.studentoj.judge.mapper.SubmissionMapper;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
@@ -25,15 +27,30 @@ public class JudgeService {
     private final ProblemTestcaseMapper testcaseMapper;
     private final SandboxClient sandboxClient;
     private final JudgeFinishedPublisher publisher;
+    private final SubmissionMapper submissionMapper;
 
     public JudgeService(ProblemMapper problemMapper,
                         ProblemTestcaseMapper testcaseMapper,
                         SandboxClient sandboxClient,
-                        JudgeFinishedPublisher publisher) {
+                        JudgeFinishedPublisher publisher,
+                        SubmissionMapper submissionMapper) {
         this.problemMapper = problemMapper;
         this.testcaseMapper = testcaseMapper;
         this.sandboxClient = sandboxClient;
         this.publisher = publisher;
+        this.submissionMapper = submissionMapper;
+    }
+
+    public JudgeResult rejudge(Long submissionId) {
+        if (submissionId == null) {
+            return new JudgeResult(null, "RUNTIME_ERROR", 0, 0, "提交ID不能为空");
+        }
+        SubmissionEntity submission = submissionMapper.selectById(submissionId);
+        if (submission == null) {
+            return new JudgeResult(submissionId, "RUNTIME_ERROR", 0, 0, "提交记录不存在");
+        }
+        return judge(new JudgeRequest(submissionId, submission.getUserId(),
+                submission.getProblemId(), submission.getSqlContent()));
     }
 
     public JudgeResult judge(JudgeRequest request) {

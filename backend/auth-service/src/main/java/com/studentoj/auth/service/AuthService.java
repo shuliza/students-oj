@@ -1,8 +1,10 @@
 package com.studentoj.auth.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.studentoj.auth.dto.ChangePasswordRequest;
 import com.studentoj.auth.dto.LoginRequest;
 import com.studentoj.auth.dto.LoginResponse;
+import com.studentoj.auth.dto.UpdateProfileRequest;
 import com.studentoj.auth.entity.UserEntity;
 import com.studentoj.auth.mapper.UserMapper;
 import org.springframework.http.HttpStatus;
@@ -58,6 +60,45 @@ public class AuthService {
 
     public void logout(String token) {
         tokenStore.revoke(token);
+    }
+
+    public void changePassword(String token, ChangePasswordRequest request) {
+        LoginResponse session = me(token);
+        if (request == null || request.oldPassword() == null || request.newPassword() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "旧密码和新密码不能为空");
+        }
+        if (request.newPassword().trim().length() < 6) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "新密码长度至少 6 位");
+        }
+        UserEntity user = userMapper.selectById(session.userId());
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "用户不存在");
+        }
+        if (!passwordEncoder.matches(request.oldPassword(), user.getPasswordHash())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "原密码错误");
+        }
+        user.setPasswordHash(passwordEncoder.encode(request.newPassword().trim()));
+        userMapper.updateById(user);
+    }
+
+    public LoginResponse updateProfile(String token, UpdateProfileRequest request) {
+        LoginResponse session = me(token);
+        UserEntity user = userMapper.selectById(session.userId());
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "用户不存在");
+        }
+        if (request != null) {
+            if (request.realName() != null && !request.realName().isBlank()) {
+                user.setRealName(request.realName().trim());
+            }
+            if (request.email() != null) {
+                user.setEmail(request.email().trim());
+            }
+        }
+        userMapper.updateById(user);
+        LoginResponse refreshed = toResponse(session.token(), user);
+        tokenStore.update(token, refreshed);
+        return refreshed;
     }
 
     private LoginResponse toResponse(String token, UserEntity user) {

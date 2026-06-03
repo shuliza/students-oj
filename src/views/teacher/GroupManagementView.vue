@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { teacherApi } from '@/api'
 import type { ClassGroup, User } from '@/types'
@@ -19,6 +19,12 @@ const memberGroupId = ref<number | null>(null)
 const memberGroupName = ref('')
 const members = ref<User[]>([])
 const memberLoading = ref(false)
+
+// Add-member dialog
+const addMemberVisible = ref(false)
+const addMemberSaving = ref(false)
+const allStudents = ref<User[]>([])
+const selectedStudentIds = ref<number[]>([])
 
 const fetchGroups = async () => {
   loading.value = true
@@ -97,6 +103,38 @@ const removeMember = async (student: User) => {
     await fetchMembers()
     await fetchGroups()
   } catch {}
+}
+
+const openAddMember = async () => {
+  selectedStudentIds.value = []
+  addMemberVisible.value = true
+  if (!allStudents.value.length) {
+    allStudents.value = await teacherApi.students()
+  }
+}
+
+const candidateStudents = computed(() => {
+  const memberIds = new Set(members.value.map((m) => m.id))
+  return allStudents.value.filter((s) => !memberIds.has(s.id))
+})
+
+const submitAddMembers = async () => {
+  if (!memberGroupId.value || !selectedStudentIds.value.length) {
+    ElMessage.warning('请选择要添加的学生')
+    return
+  }
+  addMemberSaving.value = true
+  try {
+    await teacherApi.addGroupMembers(memberGroupId.value, selectedStudentIds.value)
+    ElMessage.success(`已添加 ${selectedStudentIds.value.length} 名学生`)
+    addMemberVisible.value = false
+    await fetchMembers()
+    await fetchGroups()
+  } catch {
+    ElMessage.error('添加失败')
+  } finally {
+    addMemberSaving.value = false
+  }
 }
 
 const handleMemberExport = async () => {
@@ -194,6 +232,7 @@ onMounted(fetchGroups)
         <div class="toolbar" style="width: 100%">
           <span style="font-size: 18px; font-weight: 700">{{ memberGroupName }} - 分组成员</span>
           <div>
+            <el-button size="small" type="primary" @click="openAddMember">添加成员</el-button>
             <el-button size="small" @click="handleMemberExport">导出成员</el-button>
             <el-button size="small" type="primary" @click="handleMemberImport">导入成员</el-button>
           </div>
@@ -215,5 +254,28 @@ onMounted(fetchGroups)
         </el-table-column>
       </el-table>
     </el-drawer>
+
+    <!-- Add Member Dialog -->
+    <el-dialog v-model="addMemberVisible" title="添加成员" width="520px" destroy-on-close>
+      <el-select
+        v-model="selectedStudentIds"
+        multiple
+        filterable
+        placeholder="选择要加入分组的学生"
+        style="width: 100%"
+      >
+        <el-option
+          v-for="s in candidateStudents"
+          :key="s.id"
+          :label="`${s.realName}${s.studentNo ? ' (' + s.studentNo + ')' : ''}${s.groupName ? ' · ' + s.groupName : ''}`"
+          :value="s.id"
+        />
+      </el-select>
+      <p class="muted" style="margin-top: 10px">已选择学生原有分组将被替换为当前分组。</p>
+      <template #footer>
+        <el-button @click="addMemberVisible = false">取消</el-button>
+        <el-button type="primary" :loading="addMemberSaving" @click="submitAddMembers">确定添加</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>

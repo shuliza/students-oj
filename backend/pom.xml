@@ -18,10 +18,11 @@
     <module>ai-service</module>
     <module>statistics-service</module>
     <module>teacher-service</module>
+    <module>leetcode-crawler</module>
   </modules>
 
   <properties>
-    <java.version>21</java.version>
+    <java.version>17</java.version>
     <spring-boot.version>3.3.5</spring-boot.version>
     <mybatis-plus.version>3.5.9</mybatis-plus.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -48,6 +49,7 @@
           <version>3.13.0</version>
           <configuration>
             <release>${java.version}</release>
+            <parameters>true</parameters>
           </configuration>
         </plugin>
         <plugin>

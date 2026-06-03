@@ -47,6 +47,20 @@ public interface TeacherMapper {
     @Select("SELECT id FROM class_group WHERE name = #{name}")
     Long selectGroupIdByName(@Param("name") String name);
 
+    @Select("SELECT id FROM user WHERE id = #{id} AND role = 'STUDENT'")
+    Long selectStudentId(@Param("id") Long id);
+
+    @Update("UPDATE user SET real_name = #{realName}, student_no = #{studentNo}, group_id = #{groupId} " +
+            "WHERE id = #{id} AND role = 'STUDENT'")
+    int updateStudent(@Param("id") Long id, @Param("realName") String realName,
+                      @Param("studentNo") String studentNo, @Param("groupId") Long groupId);
+
+    @Update("UPDATE user SET status = #{status} WHERE id = #{id} AND role = 'STUDENT'")
+    int updateStudentStatus(@Param("id") Long id, @Param("status") String status);
+
+    @Update("UPDATE user SET password_hash = #{passwordHash} WHERE id = #{id} AND role = 'STUDENT'")
+    int updateStudentPassword(@Param("id") Long id, @Param("passwordHash") String passwordHash);
+
     @Insert("INSERT INTO user(username, password_hash, real_name, student_no, group_id, role, status) " +
             "VALUES(#{username}, #{passwordHash}, #{realName}, #{studentNo}, #{groupId}, 'STUDENT', 'ACTIVE')")
     int insertStudent(@Param("username") String username, @Param("passwordHash") String passwordHash,
@@ -63,11 +77,14 @@ public interface TeacherMapper {
             LEFT JOIN class_group g ON g.id = u.group_id
             CROSS JOIN problem p
             LEFT JOIN submission s ON s.user_id = u.id AND s.problem_id = p.id
+              AND (#{startDate} IS NULL OR DATE(s.submitted_at) >= #{startDate})
+              AND (#{endDate} IS NULL OR DATE(s.submitted_at) <= #{endDate})
             WHERE u.role = 'STUDENT' AND p.status = 1
               AND (#{groupId} IS NULL OR u.group_id = #{groupId})
               AND (#{studentId} IS NULL OR u.id = #{studentId})
             GROUP BY u.id, u.student_no, u.real_name, g.name, p.id, p.title
             ORDER BY u.student_no, p.id
             """)
-    List<Map<String, Object>> selectGradeData(@Param("groupId") Long groupId, @Param("studentId") Long studentId);
+    List<Map<String, Object>> selectGradeData(@Param("groupId") Long groupId, @Param("studentId") Long studentId,
+                                              @Param("startDate") String startDate, @Param("endDate") String endDate);
 }

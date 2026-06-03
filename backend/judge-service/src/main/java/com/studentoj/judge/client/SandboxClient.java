@@ -29,7 +29,8 @@ public class SandboxClient {
             return restTemplate.postForObject(url, request, SandboxExecuteResponse.class);
         } catch (RestClientException e) {
             log.error("Sandbox call failed: {}", e.getMessage());
-            return new SandboxExecuteResponse("RUNTIME_ERROR", 0, "沙箱调用失败: " + e.getMessage(), false);
+            return new SandboxExecuteResponse("RUNTIME_ERROR", 0, "沙箱调用失败: " + e.getMessage(), false,
+                    java.util.List.of(), java.util.List.of());
         }
     }
 }

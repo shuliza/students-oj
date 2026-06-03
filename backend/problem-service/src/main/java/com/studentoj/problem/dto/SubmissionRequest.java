@@ -1,4 +1,6 @@
 package com.studentoj.problem.dto;
 
-public record SubmissionRequest(Long userId, Long problemId, String sqlContent) {
+import com.fasterxml.jackson.annotation.JsonAlias;
+
+public record SubmissionRequest(Long userId, Long problemId, @JsonAlias("sql") String sqlContent) {
 }

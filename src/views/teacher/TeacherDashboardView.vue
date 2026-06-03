@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
+import { ElMessage } from 'element-plus'
 import ActivityHeatmap from '@/components/ActivityHeatmap.vue'
 import StatusTag from '@/components/StatusTag.vue'
-import { statisticsApi, teacherApi } from '@/api'
+import { statisticsApi, submissionApi, teacherApi } from '@/api'
 import { useProblemStore } from '@/stores/problem'
 import { useStatisticsStore } from '@/stores/statistics'
 import type { ClassGroup, StudentTodaySolved, User } from '@/types'
@@ -15,6 +16,7 @@ const groups = ref<ClassGroup[]>([])
 const selectedGroup = ref('')
 const selectedStudentId = ref<number | ''>('')
 const todaySolvedList = ref<StudentTodaySolved[]>([])
+const rejudgingId = ref<number | null>(null)
 
 const groupOptions = computed(() => {
   const names = new Set<string>()
@@ -71,6 +73,19 @@ async function loadScopedData() {
     })
   ])
 }
+
+async function rejudge(row: { id: number }) {
+  rejudgingId.value = row.id
+  try {
+    const result = await submissionApi.rejudge(row.id)
+    ElMessage.success(`重判完成：${result.status}`)
+    await loadScopedData()
+  } catch {
+    // 错误信息由 http 拦截器统一提示
+  } finally {
+    rejudgingId.value = null
+  }
+}
 </script>
 
 <template>
@@ -124,6 +139,11 @@ async function loadScopedData() {
           <el-table-column prop="problemTitle" label="题目" />
           <el-table-column label="结果" width="120"><template #default="{ row }"><StatusTag :status="row.status" /></template></el-table-column>
           <el-table-column prop="runtimeMs" label="耗时" width="80" />
+          <el-table-column label="操作" width="90">
+            <template #default="{ row }">
+              <el-button type="primary" link size="small" :loading="rejudgingId === row.id" @click="rejudge(row)">重判</el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </el-card>
     </div>

@@ -30,11 +30,8 @@ public class JudgeController {
 
     @PostMapping("/rejudge/{submissionId}")
     @RequireRole(Role.TEACHER)
-    public JudgeResult rejudge(@PathVariable("submissionId") Long submissionId, @RequestBody(required = false) JudgeRequest request) {
-        if (request == null) {
-            return new JudgeResult(submissionId, "RUNTIME_ERROR", 0, 0, "缺少重判请求体");
-        }
-        return judgeService.judge(new JudgeRequest(submissionId, request.userId(), request.problemId(), request.sqlContent()));
+    public JudgeResult rejudge(@PathVariable("submissionId") Long submissionId) {
+        return judgeService.rejudge(submissionId);
     }
 
     @GetMapping("/health")

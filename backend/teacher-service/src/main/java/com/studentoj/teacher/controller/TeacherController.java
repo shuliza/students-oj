@@ -5,7 +5,9 @@ import com.studentoj.common.auth.Role;
 import com.studentoj.teacher.dto.ClassGroupResponse;
 import com.studentoj.teacher.dto.ExportRequest;
 import com.studentoj.teacher.dto.GroupRequest;
+import com.studentoj.teacher.dto.StudentCreateRequest;
 import com.studentoj.teacher.dto.StudentResponse;
+import com.studentoj.teacher.dto.StudentUpdateRequest;
 import com.studentoj.teacher.service.TeacherService;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +40,29 @@ public class TeacherController {
         return teacherService.students();
     }
 
+    @PostMapping("/students")
+    public Map<String, Object> createStudent(@RequestBody StudentCreateRequest request) {
+        teacherService.createStudent(request);
+        return Map.of("created", true);
+    }
+
+    @PutMapping("/students/{id}")
+    public void updateStudent(@PathVariable("id") Long id, @RequestBody StudentUpdateRequest request) {
+        teacherService.updateStudent(id, request);
+    }
+
+    @PutMapping("/students/{id}/status")
+    public void updateStudentStatus(@PathVariable("id") Long id, @RequestBody Map<String, String> body) {
+        teacherService.updateStudentStatus(id, body == null ? null : body.get("status"));
+    }
+
+    @PostMapping("/students/{id}/reset-password")
+    public Map<String, Object> resetStudentPassword(@PathVariable("id") Long id, @RequestBody(required = false) Map<String, String> body) {
+        String newPassword = body == null ? null : body.get("newPassword");
+        teacherService.resetStudentPassword(id, newPassword);
+        return Map.of("reset", true);
+    }
+
     @GetMapping("/groups")
     public List<ClassGroupResponse> groups() {
         return teacherService.groups();
@@ -58,7 +83,7 @@ public class TeacherController {
     }
 
     @GetMapping(value = "/grades/export/student/{studentId}", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-    public ResponseEntity<byte[]> exportStudentGrades(@PathVariable Long studentId) {
+    public ResponseEntity<byte[]> exportStudentGrades(@PathVariable("studentId") Long studentId) {
         byte[] bytes = teacherService.exportStudentGrades(studentId);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=student-grades.xlsx")
@@ -71,27 +96,27 @@ public class TeacherController {
     }
 
     @PutMapping("/groups/{id}")
-    public void updateGroup(@PathVariable Long id, @RequestBody GroupRequest request) {
+    public void updateGroup(@PathVariable("id") Long id, @RequestBody GroupRequest request) {
         teacherService.updateGroup(id, request);
     }
 
     @DeleteMapping("/groups/{id}")
-    public void deleteGroup(@PathVariable Long id) {
+    public void deleteGroup(@PathVariable("id") Long id) {
         teacherService.deleteGroup(id);
     }
 
     @GetMapping("/groups/{id}/members")
-    public List<StudentResponse> getGroupMembers(@PathVariable Long id) {
+    public List<StudentResponse> getGroupMembers(@PathVariable("id") Long id) {
         return teacherService.getGroupMembers(id);
     }
 
     @PostMapping("/groups/{id}/members")
-    public void addGroupMembers(@PathVariable Long id, @RequestBody List<Long> studentIds) {
+    public void addGroupMembers(@PathVariable("id") Long id, @RequestBody List<Long> studentIds) {
         teacherService.addGroupMembers(id, studentIds);
     }
 
     @DeleteMapping("/groups/{id}/members")
-    public void removeGroupMembers(@PathVariable Long id, @RequestBody List<Long> studentIds) {
+    public void removeGroupMembers(@PathVariable("id") Long id, @RequestBody List<Long> studentIds) {
         teacherService.removeGroupMembers(id, studentIds);
     }
 
@@ -110,7 +135,7 @@ public class TeacherController {
     }
 
     @GetMapping(value = "/groups/{id}/members/export", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-    public ResponseEntity<byte[]> exportGroupMembers(@PathVariable Long id) {
+    public ResponseEntity<byte[]> exportGroupMembers(@PathVariable("id") Long id) {
         byte[] bytes = teacherService.exportGroupMembers(id);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=group-members.xlsx")
@@ -118,7 +143,7 @@ public class TeacherController {
     }
 
     @PostMapping("/groups/{id}/members/import")
-    public Map<String, Object> importGroupMembers(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+    public Map<String, Object> importGroupMembers(@PathVariable("id") Long id, @RequestParam("file") MultipartFile file) {
         int count = teacherService.importGroupMembers(id, file);
         return Map.of("imported", count);
     }

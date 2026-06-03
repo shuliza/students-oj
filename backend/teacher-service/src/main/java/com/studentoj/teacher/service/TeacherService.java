@@ -3,7 +3,9 @@ package com.studentoj.teacher.service;
 import com.studentoj.teacher.dto.ClassGroupResponse;
 import com.studentoj.teacher.dto.ExportRequest;
 import com.studentoj.teacher.dto.GroupRequest;
+import com.studentoj.teacher.dto.StudentCreateRequest;
 import com.studentoj.teacher.dto.StudentResponse;
+import com.studentoj.teacher.dto.StudentUpdateRequest;
 import com.studentoj.teacher.mapper.TeacherMapper;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -53,10 +55,88 @@ public class TeacherService {
         }
     }
 
+    public void createStudent(StudentCreateRequest request) {
+        if (request == null || request.username() == null || request.username().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "账号不能为空");
+        }
+        if (request.realName() == null || request.realName().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "姓名不能为空");
+        }
+        String password = (request.password() == null || request.password().isBlank()) ? "123456" : request.password().trim();
+        if (password.length() < 6) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "密码长度至少 6 位");
+        }
+        Long groupId = null;
+        if (request.groupName() != null && !request.groupName().isBlank()) {
+            groupId = teacherMapper.selectGroupIdByName(request.groupName().trim());
+            if (groupId == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "分组不存在：" + request.groupName());
+            }
+        }
+        try {
+            teacherMapper.insertStudent(
+                    request.username().trim(),
+                    new BCryptPasswordEncoder().encode(password),
+                    request.realName().trim(),
+                    request.studentNo() == null ? "" : request.studentNo().trim(),
+                    groupId
+            );
+        } catch (Exception e) {
+            log.warn("Failed to create student {}: {}", request.username(), e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "学生账号或学号已存在");
+        }
+    }
+
+    public void updateStudent(Long id, StudentUpdateRequest request) {
+        if (id == null || teacherMapper.selectStudentId(id) == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "学生不存在");
+        }
+        if (request == null || request.realName() == null || request.realName().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "姓名不能为空");
+        }
+        Long groupId = null;
+        if (request.groupName() != null && !request.groupName().isBlank()) {
+            groupId = teacherMapper.selectGroupIdByName(request.groupName().trim());
+            if (groupId == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "分组不存在：" + request.groupName());
+            }
+        }
+        teacherMapper.updateStudent(id, request.realName().trim(),
+                request.studentNo() == null ? "" : request.studentNo().trim(), groupId);
+    }
+
+    public void updateStudentStatus(Long id, String status) {
+        if (id == null || teacherMapper.selectStudentId(id) == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "学生不存在");
+        }
+        String normalized = status == null ? "" : status.trim().toUpperCase();
+        if (!"ACTIVE".equals(normalized) && !"DISABLED".equals(normalized)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "状态值非法");
+        }
+        teacherMapper.updateStudentStatus(id, normalized);
+    }
+
+    public void resetStudentPassword(Long id, String newPassword) {
+        if (id == null || teacherMapper.selectStudentId(id) == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "学生不存在");
+        }
+        String pwd = (newPassword == null || newPassword.isBlank()) ? "123456" : newPassword.trim();
+        if (pwd.length() < 6) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "密码长度至少 6 位");
+        }
+        teacherMapper.updateStudentPassword(id, new BCryptPasswordEncoder().encode(pwd));
+    }
+
     public byte[] exportGrades(ExportRequest request) {
         Long groupId = (request != null && request.groupId() != null && request.groupId() > 0) ? request.groupId() : null;
-        List<Map<String, Object>> data = teacherMapper.selectGradeData(groupId, null);
+        String startDate = normalizeDate(request == null ? null : request.startDate());
+        String endDate = normalizeDate(request == null ? null : request.endDate());
+        List<Map<String, Object>> data = teacherMapper.selectGradeData(groupId, null, startDate, endDate);
         return isCsv(request == null ? null : request.format()) ? generateGradeCsv(data) : generateGradeExcel(data);
+    }
+
+    private static String normalizeDate(String value) {
+        return (value == null || value.isBlank()) ? null : value.trim();
     }
 
     public static boolean isCsv(String format) {
@@ -98,7 +178,7 @@ public class TeacherService {
         if (studentId == null || studentId <= 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "学生ID不能为空");
         }
-        List<Map<String, Object>> data = teacherMapper.selectGradeData(null, studentId);
+        List<Map<String, Object>> data = teacherMapper.selectGradeData(null, studentId, null, null);
         return generateGradeExcel(data);
     }
 

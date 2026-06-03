@@ -9,6 +9,7 @@ const students = ref<User[]>([])
 const exporting = ref(false)
 
 const exportMode = ref<'group' | 'student'>('group')
+const dateRange = ref<[string, string] | null>(null)
 const form = ref({
   groupId: null as number | null,
   studentId: null as number | null,
@@ -38,9 +39,11 @@ const exportFile = async () => {
     if (exportMode.value === 'group') {
       const blob = await teacherApi.exportGrades({
         groupId: form.value.groupId ?? undefined,
+        startDate: dateRange.value?.[0] ?? undefined,
+        endDate: dateRange.value?.[1] ?? undefined,
         format: form.value.format
       })
-      downloadBlob(blob, 'student-grades.xlsx')
+      downloadBlob(blob, form.value.format === 'csv' ? 'student-grades.csv' : 'student-grades.xlsx')
     } else {
       if (!form.value.studentId) {
         ElMessage.warning('请选择学生')
@@ -88,6 +91,18 @@ onMounted(async () => {
             <el-select v-model="form.studentId" placeholder="请选择学生" filterable style="width: 260px">
               <el-option v-for="item in students" :key="item.id" :label="`${item.realName} (${item.studentNo})`" :value="item.id" />
             </el-select>
+          </el-form-item>
+          <el-form-item v-if="exportMode === 'group'" label="提交日期">
+            <el-date-picker
+              v-model="dateRange"
+              type="daterange"
+              value-format="YYYY-MM-DD"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              clearable
+              style="width: 260px"
+            />
           </el-form-item>
           <el-form-item label="文件格式">
             <el-radio-group v-model="form.format">

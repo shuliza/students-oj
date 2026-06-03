@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElNotification } from 'element-plus'
-import { ArrowLeft, Document, MagicStick, Operation, RefreshRight, Upload, VideoPlay } from '@element-plus/icons-vue'
+import { ArrowLeft, ArrowRight, Document, MagicStick, Operation, RefreshRight, Upload, VideoPlay } from '@element-plus/icons-vue'
 import SqlMonacoEditor from '@/components/SqlMonacoEditor.vue'
 import StatusTag from '@/components/StatusTag.vue'
 import { aiApi, problemApi, submissionApi } from '@/api'
+import { useProblemStore } from '@/stores/problem'
 import type { Problem, Submission } from '@/types'
 
 type SchemaTable = {
@@ -13,8 +14,23 @@ type SchemaTable = {
   columns: string[]
 }
 
+type DescriptionBlock = {
+  type: 'paragraph' | 'table'
+  text: string
+}
+
+type RunResult = {
+  status: string
+  runtimeMs: number
+  message: string
+  match: boolean
+  columns: string[]
+  rows: Record<string, unknown>[]
+}
+
 const route = useRoute()
 const router = useRouter()
+const problemStore = useProblemStore()
 const problem = ref<Problem | null>(null)
 const DEFAULT_SQL = 'SELECT s.name, c.course, c.score\nFROM student s\nJOIN score c ON s.id = c.student_id\nWHERE c.score >= 80;'
 const sql = ref(DEFAULT_SQL)
@@ -23,15 +39,35 @@ const suggestion = ref('')
 const judging = ref(false)
 const running = ref(false)
 const aiLoading = ref(false)
+const loadingProblem = ref(false)
 const activeProblemTab = ref('description')
 const activeBottomTab = ref('cases')
-const runResult = ref<{ status: string; runtimeMs: number; message: string; match: boolean } | null>(null)
+const runResult = ref<RunResult | null>(null)
 const mySubmissions = ref<Submission[]>([])
 const aiHistory = ref<Array<{ suggestion: string; createdAt?: string }>>([])
 
+const problemList = computed(() => problemStore.problems)
+const currentProblemIndex = computed(() => problemList.value.findIndex((item) => item.id === problem.value?.id))
+const previousProblem = computed(() => {
+  const index = currentProblemIndex.value
+  return index > 0 ? problemList.value[index - 1] : null
+})
+const nextProblem = computed(() => {
+  const index = currentProblemIndex.value
+  return index >= 0 && index < problemList.value.length - 1 ? problemList.value[index + 1] : null
+})
+const problemProgress = computed(() => {
+  const index = currentProblemIndex.value
+  return index >= 0 ? `${index + 1} / ${problemList.value.length}` : ''
+})
 const schemaTables = computed(() => parseSchema(problem.value?.sampleInput ?? ''))
+const publicCaseInput = computed(() => normalizeCaseText(problem.value?.sampleInput ?? ''))
+const publicCaseOutput = computed(() => normalizeCaseText(problem.value?.sampleOutput ?? ''))
+const hasPublicCase = computed(() => Boolean(publicCaseInput.value || publicCaseOutput.value))
+const isHtmlDescription = computed(() => /<\/?[a-z][\s\S]*>/i.test(problem.value?.description ?? ''))
+const descriptionBlocks = computed(() => formatPlainDescription(problem.value?.description ?? ''))
 const statusTone = computed(() => {
-  const status = result.value?.status
+  const status = result.value?.status ?? runResult.value?.status
   if (!status) return 'idle'
   if (status === 'ACCEPTED') return 'accepted'
   if (status === 'PENDING') return 'pending'
@@ -153,6 +189,33 @@ const goBack = () => {
   router.push('/student/problems')
 }
 
+const switchProblem = (target: Problem | null) => {
+  if (!target || loadingProblem.value) return
+  router.push(`/student/editor/${target.id}`)
+}
+
+const resetProblemState = () => {
+  sql.value = DEFAULT_SQL
+  result.value = null
+  suggestion.value = ''
+  runResult.value = null
+  mySubmissions.value = []
+  aiHistory.value = []
+  activeProblemTab.value = 'description'
+  activeBottomTab.value = 'cases'
+}
+
+const loadProblem = async (id: number) => {
+  loadingProblem.value = true
+  resetProblemState()
+  try {
+    problem.value = await problemApi.detail(id)
+    await Promise.all([loadMySubmissions(), loadAiHistory()])
+  } finally {
+    loadingProblem.value = false
+  }
+}
+
 function parseSchema(input: string): SchemaTable[] {
   const matches = input.matchAll(/([\w\u4e00-\u9fa5]+)\(([^)]*)\)/g)
   return Array.from(matches, (match) => ({
@@ -161,10 +224,72 @@ function parseSchema(input: string): SchemaTable[] {
   }))
 }
 
+function normalizeCaseText(value: string) {
+  const trimmed = value.replace(/\r\n/g, '\n').replace(/\r/g, '\n').trim()
+  return trimmed === '请参考题目描述' ? '' : trimmed
+}
+
+function isTableLine(line: string) {
+  const trimmed = line.trim()
+  return /^[+|]/.test(trimmed) || /^\|?\s*-{2,}\s*\|/.test(trimmed)
+}
+
+function flushBlock(blocks: DescriptionBlock[], type: DescriptionBlock['type'], lines: string[]) {
+  const text = lines.join('\n').trim()
+  if (text) {
+    blocks.push({ type, text })
+  }
+}
+
+function formatPlainDescription(raw: string): DescriptionBlock[] {
+  const normalized = raw.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+  const blocks: DescriptionBlock[] = []
+  let paragraph: string[] = []
+  let table: string[] = []
+
+  normalized.split('\n').forEach((line) => {
+    if (isTableLine(line)) {
+      flushBlock(blocks, 'paragraph', paragraph)
+      paragraph = []
+      table.push(line.trimEnd())
+      return
+    }
+
+    if (table.length) {
+      flushBlock(blocks, 'table', table)
+      table = []
+    }
+
+    if (!line.trim()) {
+      flushBlock(blocks, 'paragraph', paragraph)
+      paragraph = []
+      return
+    }
+
+    paragraph.push(line.trim())
+  })
+
+  flushBlock(blocks, 'table', table)
+  flushBlock(blocks, 'paragraph', paragraph)
+  return blocks
+}
+
 onMounted(async () => {
-  problem.value = await problemApi.detail(Number(route.params.id ?? 101))
-  await Promise.all([loadMySubmissions(), loadAiHistory()])
+  if (!problemStore.problems.length) {
+    await problemStore.fetchProblems()
+  }
+  await loadProblem(Number(route.params.id ?? 101))
 })
+
+watch(
+  () => route.params.id,
+  async (id) => {
+    const nextId = Number(id ?? 101)
+    if (!Number.isNaN(nextId) && nextId !== problem.value?.id) {
+      await loadProblem(nextId)
+    }
+  }
+)
 </script>
 
 <template>
@@ -178,6 +303,26 @@ onMounted(async () => {
         <span class="nav-item">讨论</span>
       </div>
       <div class="topbar-actions">
+        <div class="problem-switcher">
+          <el-button
+            class="switch-button"
+            :icon="ArrowLeft"
+            :disabled="!previousProblem || loadingProblem"
+            :loading="loadingProblem"
+            @click="switchProblem(previousProblem)"
+          >
+            上一题
+          </el-button>
+          <span v-if="problemProgress" class="problem-progress">{{ problemProgress }}</span>
+          <el-button
+            class="switch-button"
+            :icon="ArrowRight"
+            :disabled="!nextProblem || loadingProblem"
+            @click="switchProblem(nextProblem)"
+          >
+            下一题
+          </el-button>
+        </div>
         <el-button class="ghost-action" :icon="RefreshRight" text @click="resetSql">重置</el-button>
         <el-button class="run-button" :icon="VideoPlay" :loading="running" :disabled="judging" @click="runOnly">运行</el-button>
         <el-button class="submit-button" :icon="Upload" :loading="judging" @click="submit">提交</el-button>
@@ -206,7 +351,13 @@ onMounted(async () => {
               <span class="pass-rate">通过率 {{ problem.passRate }}%</span>
             </div>
 
-            <p class="description">{{ problem.description }}</p>
+            <div v-if="isHtmlDescription" class="description problem-html" v-html="problem.description"></div>
+            <div v-else class="description description-blocks">
+              <template v-for="(block, index) in descriptionBlocks" :key="index">
+                <pre v-if="block.type === 'table'" class="description-table">{{ block.text }}</pre>
+                <p v-else>{{ block.text }}</p>
+              </template>
+            </div>
             <p class="return-note">以任意顺序返回结果表。</p>
 
             <section class="schema-section">
@@ -295,16 +446,52 @@ onMounted(async () => {
 
           <div v-if="activeBottomTab === 'cases'" class="case-body">
             <div class="case-pill">Case 1</div>
-            <div v-for="table in schemaTables" :key="table.name" class="case-block">
-              <div class="case-title">{{ table.name }} =</div>
-              <pre>| {{ table.columns.join(' | ') }} |
+            <template v-if="hasPublicCase">
+              <div v-if="publicCaseInput" class="case-block">
+                <div class="case-title">输入</div>
+                <pre>{{ publicCaseInput }}</pre>
+              </div>
+              <div v-if="publicCaseOutput" class="case-block">
+                <div class="case-title">预期输出</div>
+                <pre>{{ publicCaseOutput }}</pre>
+              </div>
+            </template>
+            <template v-else>
+              <div v-for="table in schemaTables" :key="table.name" class="case-block">
+                <div class="case-title">{{ table.name }} =</div>
+                <pre>| {{ table.columns.join(' | ') }} |
 | {{ table.columns.map(() => '--------').join(' | ') }} |</pre>
-            </div>
+              </div>
+            </template>
           </div>
 
           <div v-else class="result-body" :class="statusTone">
-            <el-empty v-if="!result" description="暂无运行结果" />
-            <template v-else>
+            <el-empty v-if="!result && !runResult" description="暂无运行结果" />
+            <template v-else-if="runResult && !result">
+              <div class="result-head">
+                <StatusTag :status="runResult.status" />
+                <strong>{{ runResult.match ? 100 : 0 }} 分</strong>
+                <span>{{ runResult.runtimeMs }}ms</span>
+              </div>
+              <p v-if="runResult.message" class="result-message">{{ runResult.message }}</p>
+              <el-table
+                v-if="runResult.columns.length"
+                :data="runResult.rows"
+                size="small"
+                border
+                class="run-result-table"
+              >
+                <el-table-column
+                  v-for="column in runResult.columns"
+                  :key="column"
+                  :prop="column"
+                  :label="column"
+                  min-width="120"
+                  show-overflow-tooltip
+                />
+              </el-table>
+            </template>
+            <template v-else-if="result">
               <div class="result-head">
                 <StatusTag :status="result.status" />
                 <strong>{{ result.score }} 分</strong>
@@ -331,20 +518,31 @@ onMounted(async () => {
 
 <style scoped>
 .leetcode-sql {
+  --workspace-bg: #0b1120;
+  --workspace-surface: #111827;
+  --workspace-surface-2: #162033;
+  --workspace-surface-3: #1f2937;
+  --workspace-border: #29364d;
+  --workspace-text: #f8fafc;
+  --workspace-muted: #94a3b8;
+  --workspace-accent: #22c55e;
   height: 100vh;
-  color: #f5f5f5;
-  background: #171717;
+  color: var(--workspace-text);
+  background:
+    radial-gradient(circle at 80% 0, rgba(34, 197, 94, 0.1), transparent 320px),
+    var(--workspace-bg);
   overflow: hidden;
 }
 
 .topbar {
-  height: 38px;
-  padding: 0 12px;
+  height: 46px;
+  padding: 0 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #2f2f2f;
-  background: #111111;
+  border-bottom: 1px solid var(--workspace-border);
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(14px);
 }
 
 .topbar-left,
@@ -365,17 +563,44 @@ onMounted(async () => {
   gap: 8px;
 }
 
+.problem-switcher {
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-right: 8px;
+  margin-right: 2px;
+  border-right: 1px solid var(--workspace-border);
+}
+
+.switch-button {
+  height: 28px;
+  min-width: 76px;
+  border: 1px solid var(--workspace-border);
+  border-radius: 6px;
+  color: #dbeafe;
+  background: #172033;
+  font-weight: 600;
+}
+
+.problem-progress {
+  min-width: 48px;
+  color: var(--workspace-muted);
+  font-size: 12px;
+  text-align: center;
+}
+
 .icon-button {
-  color: #bdbdbd;
+  color: var(--workspace-muted);
 }
 
 .brand-mark {
-  color: #e7e7e7;
-  font-weight: 700;
+  color: #ffffff;
+  font-weight: 780;
 }
 
 .nav-item {
-  color: #a8a8a8;
+  color: var(--workspace-muted);
   font-size: 13px;
 }
 
@@ -385,7 +610,7 @@ onMounted(async () => {
 }
 
 .ghost-action {
-  color: #bdbdbd;
+  color: var(--workspace-muted);
 }
 
 .run-button,
@@ -397,30 +622,30 @@ onMounted(async () => {
 }
 
 .run-button {
-  color: #d7d7d7;
-  background: #2c2c2c;
+  color: #dbeafe;
+  background: #1e293b;
 }
 
 .submit-button {
-  color: #19c37d;
-  background: #18382c;
+  color: #052e16;
+  background: var(--workspace-accent);
 }
 
 .workspace {
-  height: calc(100vh - 38px);
-  padding: 8px;
+  height: calc(100vh - 46px);
+  padding: 10px;
   display: grid;
   grid-template-columns: minmax(360px, 29%) minmax(0, 1fr);
-  gap: 8px;
+  gap: 10px;
 }
 
 .problem-pane,
 .code-panel,
 .bottom-panel {
   min-width: 0;
-  border-radius: 6px;
-  border: 1px solid #303030;
-  background: #242424;
+  border-radius: 8px;
+  border: 1px solid var(--workspace-border);
+  background: var(--workspace-surface);
   overflow: hidden;
 }
 
@@ -435,8 +660,8 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 8px;
-  border-bottom: 1px solid #303030;
-  background: #303030;
+  border-bottom: 1px solid var(--workspace-border);
+  background: var(--workspace-surface-2);
 }
 
 .pane-tabs button {
@@ -447,14 +672,14 @@ onMounted(async () => {
   gap: 5px;
   border: 0;
   border-radius: 6px;
-  color: #a8a8a8;
+  color: var(--workspace-muted);
   background: transparent;
   cursor: pointer;
 }
 
 .pane-tabs button.active {
   color: #ffffff;
-  background: #242424;
+  background: var(--workspace-surface);
 }
 
 .pane-tabs.compact {
@@ -487,8 +712,8 @@ onMounted(async () => {
   display: inline-flex;
   align-items: center;
   border-radius: 12px;
-  color: #d5d5d5;
-  background: #373737;
+  color: #dbeafe;
+  background: #1e293b;
   font-size: 12px;
 }
 
@@ -509,9 +734,47 @@ onMounted(async () => {
 
 .description,
 .return-note {
-  color: #e8e8e8;
+  color: #e5edf7;
   font-size: 15px;
   line-height: 1.8;
+}
+
+.description-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.description-blocks p {
+  margin: 0;
+}
+
+.description-table {
+  margin: 2px 0 4px;
+  padding: 12px;
+  border: 1px solid #26364f;
+  border-radius: 6px;
+  color: #dbeafe;
+  background: #0b1220;
+  white-space: pre;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.problem-html :deep(p) {
+  margin: 0 0 14px;
+}
+
+.problem-html :deep(pre) {
+  margin: 12px 0 18px;
+  white-space: pre;
+}
+
+.problem-html :deep(code) {
+  padding: 2px 5px;
+  border-radius: 4px;
+  color: #f9fafb;
+  background: #243047;
 }
 
 .schema-section,
@@ -533,27 +796,27 @@ onMounted(async () => {
 .schema-name,
 .case-title {
   margin-bottom: 8px;
-  color: #d8d8d8;
+  color: #cbd5e1;
   font-size: 13px;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  color: #f0f0f0;
+  color: #f1f5f9;
   font-size: 13px;
 }
 
 th,
 td {
   padding: 9px 10px;
-  border: 1px solid #4a4a4a;
+  border: 1px solid var(--workspace-border);
   text-align: left;
 }
 
 th {
-  color: #bdbdbd;
-  background: #303030;
+  color: #cbd5e1;
+  background: var(--workspace-surface-2);
 }
 
 pre {
@@ -561,7 +824,7 @@ pre {
   padding: 14px;
   border-radius: 6px;
   color: #f4f4f5;
-  background: #3a3a3a;
+  background: #0f172a;
   overflow: auto;
   font-family: Consolas, "Courier New", monospace;
   font-size: 13px;
@@ -573,7 +836,7 @@ pre {
   display: grid;
   place-items: center;
   gap: 10px;
-  color: #a8a8a8;
+  color: var(--workspace-muted);
   text-align: center;
 }
 
@@ -589,9 +852,9 @@ pre {
 
 .ai-history-item {
   padding: 12px 14px;
-  border: 1px solid #2f2f2f;
+  border: 1px solid var(--workspace-border);
   border-radius: 8px;
-  background: #1d1d1d;
+  background: #0f172a;
 }
 
 .ai-history-time {
@@ -599,7 +862,7 @@ pre {
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: #8f8f8f;
+  color: var(--workspace-muted);
   margin-bottom: 6px;
 }
 
@@ -616,16 +879,16 @@ pre {
   align-items: center;
   gap: 14px;
   padding: 10px 14px;
-  border: 1px solid #2f2f2f;
+  border: 1px solid var(--workspace-border);
   border-radius: 8px;
-  background: #1d1d1d;
+  background: #0f172a;
   font-size: 13px;
   color: #cfcfcf;
 }
 
 .submission-time {
   margin-left: auto;
-  color: #8f8f8f;
+  color: var(--workspace-muted);
 }
 
 .coding-pane {
@@ -645,8 +908,8 @@ pre {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #303030;
-  background: #303030;
+  border-bottom: 1px solid var(--workspace-border);
+  background: var(--workspace-surface-2);
 }
 
 .title-left,
@@ -658,7 +921,8 @@ pre {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #22c55e;
+  background: var(--workspace-accent);
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.12);
 }
 
 .language-select {
@@ -666,7 +930,7 @@ pre {
 }
 
 .smart-mode {
-  color: #8f8f8f;
+  color: var(--workspace-muted);
   font-size: 13px;
 }
 
@@ -688,7 +952,7 @@ pre {
   padding: 7px 16px;
   border-radius: 8px;
   color: #ffffff;
-  background: #4a4a4a;
+  background: #263449;
   font-weight: 700;
   font-size: 13px;
 }
@@ -720,12 +984,20 @@ pre {
 
 .result-message {
   margin: 0 0 14px;
-  color: #b9c2d0;
+  color: #cbd5e1;
 }
 
 .ai-button {
   width: 180px;
   margin-bottom: 14px;
+}
+
+.run-result-table {
+  --el-table-bg-color: var(--workspace-surface);
+  --el-table-tr-bg-color: #111827;
+  --el-table-header-bg-color: #162033;
+  --el-table-text-color: #f0f0f0;
+  --el-table-header-text-color: #d0d0d0;
 }
 
 :deep(.monaco-host) {
@@ -736,8 +1008,8 @@ pre {
 
 :deep(.el-select__wrapper) {
   min-height: 28px;
-  background: #2b2b2b;
-  box-shadow: 0 0 0 1px #444444 inset;
+  background: #111827;
+  box-shadow: 0 0 0 1px var(--workspace-border) inset;
 }
 
 @media (max-width: 920px) {
@@ -745,6 +1017,19 @@ pre {
     height: auto;
     min-height: 100vh;
     overflow: auto;
+  }
+
+  .topbar {
+    height: auto;
+    min-height: 46px;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .topbar-left,
+  .topbar-actions {
+    flex-wrap: wrap;
   }
 
   .workspace {

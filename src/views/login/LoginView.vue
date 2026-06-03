@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { DataLine, Key, UserFilled } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 
 const router = useRouter()
@@ -34,15 +35,15 @@ const login = async () => {
         <h2>登录</h2>
         <el-form label-position="top">
           <el-form-item label="账号">
-            <el-input v-model="username" />
+            <el-input v-model="username" :prefix-icon="UserFilled" autocomplete="username" />
           </el-form-item>
           <el-form-item label="密码">
-            <el-input v-model="password" type="password" show-password />
+            <el-input v-model="password" type="password" :prefix-icon="Key" show-password autocomplete="current-password" />
           </el-form-item>
           <el-form-item label="身份">
             <el-segmented v-model="role" :options="[{ label: '学生', value: 'STUDENT' }, { label: '教师', value: 'TEACHER' }]" />
           </el-form-item>
-          <el-button type="primary" size="large" class="login-button" :loading="loading" @click="login">进入系统</el-button>
+          <el-button type="primary" size="large" class="login-button" :icon="DataLine" :loading="loading" @click="login">进入系统</el-button>
         </el-form>
       </el-card>
     </section>
@@ -54,7 +55,9 @@ const login = async () => {
   min-height: 100vh;
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
-  background: var(--color-bg);
+  background:
+    radial-gradient(circle at 12% 18%, rgba(147, 197, 253, 0.38), transparent 340px),
+    linear-gradient(135deg, #eef5ff 0%, #f8fafc 48%, #ffffff 100%);
 }
 
 .login-visual {
@@ -62,19 +65,26 @@ const login = async () => {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: var(--color-sidebar);
+  background:
+    linear-gradient(135deg, rgba(30, 64, 175, 0.34), rgba(15, 23, 42, 0.78)),
+    var(--color-sidebar);
   color: #ffffff;
 }
 
 .login-visual h1 {
   margin: 0;
+  max-width: 640px;
   font-size: 48px;
+  line-height: 1.12;
+  font-weight: 780;
 }
 
 .login-visual p {
   margin-top: 18px;
-  color: #cbd5e1;
+  max-width: 560px;
+  color: #dbeafe;
   font-size: 18px;
+  line-height: 1.75;
 }
 
 .login-panel {
@@ -86,14 +96,43 @@ const login = async () => {
 
 .login-card {
   width: 420px;
-  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-raised);
 }
 
 .login-card h2 {
   margin: 0 0 24px;
+  color: #0f172a;
+  font-size: 24px;
+  font-weight: 760;
 }
 
 .login-button {
   width: 100%;
+  margin-top: 8px;
+}
+
+@media (max-width: 860px) {
+  .login-page {
+    grid-template-columns: 1fr;
+  }
+
+  .login-visual {
+    padding: 48px 28px;
+  }
+
+  .login-visual h1 {
+    font-size: 34px;
+  }
+
+  .login-panel {
+    padding: 28px 18px 40px;
+  }
+
+  .login-card {
+    width: 100%;
+    max-width: 440px;
+  }
 }
 </style>

@@ -218,6 +218,13 @@ services:
     ports:
       - "80:80"
 
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --url http://web:80
+    depends_on:
+      - web
+
   prometheus:
     image: prom/prometheus:v2.54.1
     volumes:

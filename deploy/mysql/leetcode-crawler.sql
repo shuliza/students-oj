@@ -1,0 +1,22 @@
+CREATE TABLE IF NOT EXISTS sql_problem (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255),
+    title_slug VARCHAR(255) UNIQUE,
+    difficulty VARCHAR(20),
+    content LONGTEXT,
+    content_text LONGTEXT,
+    example LONGTEXT,
+    schema_info LONGTEXT,
+    sample_data LONGTEXT,
+    expected_output LONGTEXT,
+    test_cases LONGTEXT,
+    hint LONGTEXT,
+    tags VARCHAR(500),
+    source VARCHAR(50),
+    source_url VARCHAR(500),
+    create_time DATETIME,
+    update_time DATETIME,
+    KEY idx_sql_problem_difficulty (difficulty),
+    KEY idx_sql_problem_source (source),
+    KEY idx_sql_problem_update_time (update_time)
+);

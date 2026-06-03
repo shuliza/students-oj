@@ -15,6 +15,13 @@ export const authApi = {
   async me() {
     const { data } = await http.get('/auth/me')
     return mapLoginUser(data)
+  },
+  async changePassword(oldPassword: string, newPassword: string) {
+    await http.post('/auth/password', { oldPassword, newPassword })
+  },
+  async updateProfile(payload: { realName?: string; email?: string }) {
+    const { data } = await http.put('/auth/profile', payload)
+    return mapLoginUser(data)
   }
 }
 
@@ -32,7 +39,14 @@ export const problemApi = {
     return data
   },
   async run(problemId: number, sql: string) {
-    const { data } = await http.post<{ status: string; runtimeMs: number; message: string; match: boolean }>(
+    const { data } = await http.post<{
+      status: string
+      runtimeMs: number
+      message: string
+      match: boolean
+      columns: string[]
+      rows: Record<string, unknown>[]
+    }>(
       '/submission/run',
       { problemId, sqlContent: sql }
     )
@@ -52,6 +66,10 @@ export const submissionApi = {
   async get(id: number) {
     const { data } = await http.get<Submission>(`/submission/${id}`)
     return data
+  },
+  async rejudge(id: number) {
+    const { data } = await http.post(`/judge/rejudge/${id}`)
+    return data as { submissionId: number; status: string; score: number; runtimeMs: number; message: string }
   }
 }
 
@@ -104,6 +122,18 @@ export const teacherApi = {
   async students() {
     const { data } = await http.get<User[]>('/teacher/students')
     return data
+  },
+  async createStudent(payload: { username: string; realName: string; studentNo?: string; password?: string; groupName?: string }) {
+    await http.post('/teacher/students', payload)
+  },
+  async updateStudent(id: number, payload: { realName: string; studentNo?: string; groupName?: string }) {
+    await http.put(`/teacher/students/${id}`, payload)
+  },
+  async updateStudentStatus(id: number, status: 'ACTIVE' | 'DISABLED') {
+    await http.put(`/teacher/students/${id}/status`, { status })
+  },
+  async resetStudentPassword(id: number, newPassword?: string) {
+    await http.post(`/teacher/students/${id}/reset-password`, { newPassword })
   },
   async groups() {
     const { data } = await http.get<ClassGroup[]>('/teacher/groups')

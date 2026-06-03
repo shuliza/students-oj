@@ -1,15 +1,49 @@
 :root {
-  --color-primary: #2563eb;
-  --color-primary-dark: #1d4ed8;
+  --color-primary: #1e40af;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-soft: #dbeafe;
+  --color-accent: #16a34a;
   --color-sidebar: #0f172a;
-  --color-bg: #f1f5f9;
+  --color-sidebar-2: #111c33;
+  --color-bg: #f6f8fb;
+  --color-bg-soft: #eef4fb;
   --color-card: #ffffff;
-  --color-border: #cbd5e1;
-  --color-text: #1e293b;
+  --color-border: #d8e1ee;
+  --color-border-strong: #b8c5d8;
+  --color-text: #172033;
   --color-muted: #64748b;
+  --color-subtle: #94a3b8;
   --color-success: #16a34a;
+  --color-success-soft: #dcfce7;
   --color-danger: #dc2626;
-  --color-warning: #f59e0b;
+  --color-danger-soft: #fee2e2;
+  --color-warning: #d97706;
+  --color-warning-soft: #fef3c7;
+  --shadow-card: 0 10px 30px rgba(15, 23, 42, 0.06);
+  --shadow-raised: 0 18px 45px rgba(15, 23, 42, 0.1);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --font-sans: Inter, "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+  --font-mono: "Fira Code", "JetBrains Mono", Consolas, "Courier New", monospace;
+
+  --el-color-primary: var(--color-primary);
+  --el-color-primary-light-3: #3b82f6;
+  --el-color-primary-light-5: #60a5fa;
+  --el-color-primary-light-7: #93c5fd;
+  --el-color-primary-light-8: #bfdbfe;
+  --el-color-primary-light-9: #dbeafe;
+  --el-color-primary-dark-2: #1e3a8a;
+  --el-color-success: var(--color-success);
+  --el-color-warning: var(--color-warning);
+  --el-color-danger: var(--color-danger);
+  --el-border-radius-base: var(--radius-md);
+  --el-border-color: var(--color-border);
+  --el-border-color-light: #e2e8f0;
+  --el-text-color-primary: var(--color-text);
+  --el-text-color-regular: #334155;
+  --el-text-color-secondary: var(--color-muted);
+  --el-fill-color-blank: var(--color-card);
 }
 
 * {
@@ -20,7 +54,9 @@ body {
   margin: 0;
   color: var(--color-text);
   background: var(--color-bg);
-  font-family: Inter, "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+  font-family: var(--font-sans);
+  letter-spacing: 0;
+  text-rendering: optimizeLegibility;
 }
 
 a {
@@ -31,25 +67,33 @@ a {
 .page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
 .page-title {
   margin: 0;
-  font-size: 24px;
-  font-weight: 700;
+  color: #0f172a;
+  font-size: 26px;
+  line-height: 1.25;
+  font-weight: 760;
 }
 
 .page-subtitle {
-  margin: 6px 0 0;
+  margin: 7px 0 0;
   color: var(--color-muted);
   font-size: 14px;
+  line-height: 1.6;
 }
 
 .section-card {
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius-lg);
   background: var(--color-card);
+  box-shadow: var(--shadow-card);
+}
+
+.section-card > .el-card__body {
+  padding: 18px;
 }
 
 .toolbar {
@@ -62,47 +106,67 @@ a {
 
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
 }
 
 .metric-card {
-  min-height: 116px;
-  padding: 20px;
+  position: relative;
+  min-height: 112px;
+  padding: 18px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  background: var(--color-card);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(135deg, rgba(219, 234, 254, 0.72), rgba(255, 255, 255, 0) 54%),
+    var(--color-card);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.metric-card::after {
+  content: "";
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(30, 64, 175, 0.08);
 }
 
 .metric-label {
   color: var(--color-muted);
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .metric-value {
-  margin-top: 14px;
+  margin-top: 16px;
   color: var(--color-primary);
-  font-size: 36px;
+  font-size: 34px;
   line-height: 1;
-  font-weight: 700;
+  font-weight: 780;
+  letter-spacing: 0;
 }
 
 .grid-2 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
+  gap: 16px;
 }
 
 .grid-main-side {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(360px, 0.9fr);
-  gap: 20px;
+  gap: 16px;
 }
 
 .card-title {
-  margin: 0 0 16px;
-  font-size: 20px;
-  font-weight: 700;
+  margin: 0 0 14px;
+  color: #0f172a;
+  font-size: 18px;
+  line-height: 1.3;
+  font-weight: 720;
 }
 
 .muted {
@@ -112,14 +176,100 @@ a {
 .monaco-host {
   height: 420px;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   border: 1px solid #334155;
 }
 
+.el-button {
+  font-weight: 650;
+}
+
+.el-button:not(.is-text):not(.is-link) {
+  box-shadow: none;
+}
+
+.el-button--primary {
+  --el-button-bg-color: var(--color-primary);
+  --el-button-border-color: var(--color-primary);
+  --el-button-hover-bg-color: var(--color-primary-hover);
+  --el-button-hover-border-color: var(--color-primary-hover);
+}
+
+.el-input__wrapper,
+.el-select__wrapper,
+.el-textarea__inner {
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 0 1px var(--color-border) inset;
+}
+
+.el-input__wrapper:hover,
+.el-select__wrapper:hover,
+.el-textarea__inner:hover {
+  box-shadow: 0 0 0 1px var(--color-border-strong) inset;
+}
+
+.el-table {
+  --el-table-header-bg-color: #f8fafc;
+  --el-table-header-text-color: #475569;
+  --el-table-row-hover-bg-color: #f1f5f9;
+  --el-table-border-color: #e2e8f0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  font-size: 13px;
+}
+
+.el-table th.el-table__cell {
+  font-weight: 700;
+}
+
+.el-tag {
+  border-radius: 999px;
+  font-weight: 650;
+}
+
+.el-dialog {
+  border-radius: var(--radius-lg);
+}
+
+.el-dialog__header {
+  padding-bottom: 12px;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.el-dialog__footer {
+  border-top: 1px solid #edf2f7;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .el-button,
+  .menu-item,
+  .metric-card,
+  .section-card {
+    transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, color 0.18s ease;
+  }
+}
+
 @media (max-width: 1100px) {
-  .metric-grid,
   .grid-2,
   .grid-main-side {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .page {
+    gap: 14px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .toolbar {
+    align-items: stretch;
+  }
+
+  .metric-grid {
     grid-template-columns: 1fr;
   }
 }

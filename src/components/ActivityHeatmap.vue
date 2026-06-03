@@ -172,7 +172,7 @@ const tooltip = (day: DayCell) => `${day.count} 个提交, ${formatDisplayDate(d
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   color: var(--color-text);
 }
 
@@ -191,9 +191,9 @@ const tooltip = (day: DayCell) => `${day.count} 个提交, ${formatDisplayDate(d
 
 .months {
   display: flex;
-  gap: 22px;
+  gap: 20px;
   overflow-x: auto;
-  padding: 34px 2px 8px;
+  padding: 34px 2px 10px;
   margin-top: -32px;
 }
 
@@ -221,23 +221,23 @@ const tooltip = (day: DayCell) => `${day.count} 个提交, ${formatDisplayDate(d
   height: var(--cell-size);
   padding: 0;
   border: 0;
-  border-radius: 3px;
-  background: #e5e7eb;
+  border-radius: 4px;
+  background: #e2e8f0;
   cursor: default;
 }
 
 .day-cell:hover,
 .day-cell:focus-visible {
-  outline: 2px solid rgba(37, 99, 235, 0.35);
+  outline: 2px solid rgba(30, 64, 175, 0.35);
   outline-offset: 1px;
 }
 
 .day-cell.today {
-  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.75);
+  box-shadow: 0 0 0 1px rgba(30, 64, 175, 0.75);
 }
 
 .level-0 {
-  background: #e5e7eb;
+  background: #e2e8f0;
 }
 
 .level-1 {
