@@ -9,6 +9,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.SQLTimeoutException;
 import java.sql.Statement;
+import java.util.LinkedHashSet;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -100,8 +101,10 @@ public class SandboxService {
             createDatabase(admin, databaseName);
             try (Connection runConnection = dataSource.getConnection()) {
                 runConnection.setCatalog(databaseName);
+                configureRunSession(runConnection);
                 runConnection.setAutoCommit(false);
                 executeSqlScript(runConnection, request.initSql());
+                createTableCaseAliases(runConnection);
 
                 QueryResult studentResult = runQuery(runConnection, studentSql);
                 QueryResult expectedResult = runQuery(runConnection, request.answerSql());
@@ -151,6 +154,14 @@ public class SandboxService {
         }
     }
 
+    private void configureRunSession(Connection conn) throws SQLException {
+        try (Statement statement = conn.createStatement()) {
+            statement.execute("SET SESSION sql_mode = "
+                    + "REPLACE(REPLACE(REPLACE(@@SESSION.sql_mode, 'ONLY_FULL_GROUP_BY,', ''), "
+                    + "',ONLY_FULL_GROUP_BY', ''), 'ONLY_FULL_GROUP_BY', '')");
+        }
+    }
+
     private void createDatabase(Connection conn, String databaseName) throws SQLException {
         try (Statement statement = conn.createStatement()) {
             statement.execute("CREATE DATABASE `" + databaseName + "` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci");
@@ -178,6 +189,49 @@ public class SandboxService {
                 }
             }
         }
+    }
+
+    private void createTableCaseAliases(Connection conn) throws SQLException {
+        List<String> tableNames = new ArrayList<>();
+        try (ResultSet rs = conn.getMetaData().getTables(conn.getCatalog(), null, "%", new String[]{"TABLE"})) {
+            while (rs.next()) {
+                tableNames.add(rs.getString("TABLE_NAME"));
+            }
+        }
+
+        try (Statement statement = conn.createStatement()) {
+            statement.setQueryTimeout(queryTimeoutSeconds);
+            for (String tableName : tableNames) {
+                for (String alias : caseAliases(tableName)) {
+                    if (!alias.equals(tableName)) {
+                        try {
+                            statement.execute("CREATE VIEW " + quoteIdentifier(alias)
+                                    + " AS SELECT * FROM " + quoteIdentifier(tableName));
+                        } catch (SQLException e) {
+                            // Ignore aliases that already exist or cannot be created; the original table remains usable.
+                            log.debug("Skipped table alias {} for {}: {}", alias, tableName, e.getMessage());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private LinkedHashSet<String> caseAliases(String tableName) {
+        LinkedHashSet<String> aliases = new LinkedHashSet<>();
+        if (isBlank(tableName)) {
+            return aliases;
+        }
+        aliases.add(tableName);
+        aliases.add(tableName.toLowerCase());
+        aliases.add(tableName.toUpperCase());
+        aliases.add(Character.toUpperCase(tableName.charAt(0)) + tableName.substring(1));
+        aliases.add(Character.toLowerCase(tableName.charAt(0)) + tableName.substring(1));
+        return aliases;
+    }
+
+    private String quoteIdentifier(String identifier) {
+        return "`" + identifier.replace("`", "``") + "`";
     }
 
     private QueryResult runQuery(Connection conn, String sql) throws SQLException {
