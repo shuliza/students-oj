@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
 import {
   ArrowDown,
+  Avatar,
   Collection,
   DataAnalysis,
   Download,
@@ -44,6 +45,7 @@ const studentMenus = [
 const teacherMenus = [
   { label: '数据看板', path: '/teacher/dashboard', icon: DataAnalysis },
   { label: '学生管理', path: '/teacher/students', icon: UserFilled },
+  { label: '教师管理', path: '/teacher/teachers', icon: Avatar },
   { label: '学生分组', path: '/teacher/groups', icon: School },
   { label: '题库管理', path: '/teacher/problems', icon: Collection },
   { label: '成绩导出', path: '/teacher/export', icon: Download }
@@ -169,7 +171,6 @@ const initials = computed(() => auth.user?.realName?.slice(0, 1) ?? 'U')
   display: grid;
   grid-template-columns: 248px minmax(0, 1fr);
   background: var(--color-bg);
-  transition: grid-template-columns 0.2s ease;
 }
 
 .layout.collapsed {

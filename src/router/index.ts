@@ -26,6 +26,7 @@ const router = createRouter({
       children: [
         { path: 'dashboard', name: 'teacher-dashboard', component: () => import('@/views/teacher/TeacherDashboardView.vue') },
         { path: 'students', name: 'student-management', component: () => import('@/views/teacher/StudentManagementView.vue') },
+        { path: 'teachers', name: 'teacher-management', component: () => import('@/views/teacher/TeacherManagementView.vue') },
         { path: 'groups', name: 'group-management', component: () => import('@/views/teacher/GroupManagementView.vue') },
         { path: 'problems', name: 'problem-management', component: () => import('@/views/teacher/ProblemManagementView.vue') },
         { path: 'export', name: 'export-center', component: () => import('@/views/teacher/ExportCenterView.vue') }

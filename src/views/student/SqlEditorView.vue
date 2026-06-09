@@ -694,6 +694,7 @@ watch(
 
 .problem-scroll h1 {
   margin: 0 0 14px;
+  color: var(--workspace-text);
   font-size: 24px;
   line-height: 1.3;
 }

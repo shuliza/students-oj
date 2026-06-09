@@ -10,6 +10,7 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>app</module>
     <module>auth-common</module>
     <module>auth-service</module>
     <module>problem-service</module>

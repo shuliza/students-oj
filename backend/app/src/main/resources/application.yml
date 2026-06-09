@@ -1,0 +1,83 @@
+server:
+  port: ${SERVER_PORT:8080}
+
+spring:
+  application:
+    name: student-oj
+  # 业务主库（auth / problem / judge / ai / statistics / teacher / leetcode-crawler 共用）
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${MYSQL_DATABASE:student_oj}?useSSL=false&useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_0900_ai_ci&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:root}
+    hikari:
+      maximum-pool-size: ${MAIN_DB_POOL_SIZE:20}
+      connection-timeout: 5000
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 3s
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+
+studentoj:
+  # 鉴权
+  auth:
+    token:
+      ttl-seconds: 86400
+    internal-secret: ${STUDENTOJ_AUTH_INTERNAL_SECRET:student-oj-internal-v1}
+  # 提交限流与题目缓存
+  submission:
+    run-min-interval-ms: ${RUN_MIN_INTERVAL_MS:2500}
+  problem:
+    cache-ttl-ms: ${PROBLEM_CACHE_TTL_MS:15000}
+  # 沙箱：执行参数 + 物理隔离的专用数据源（独立账号、独立库，支持 CREATE/DROP DATABASE）
+  sandbox:
+    query-timeout-seconds: 5
+    max-rows: 5000
+    max-concurrent-executions: ${SANDBOX_MAX_CONCURRENT_EXECUTIONS:16}
+    acquire-timeout-ms: ${SANDBOX_ACQUIRE_TIMEOUT_MS:1500}
+    datasource:
+      jdbc-url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${SANDBOX_MYSQL_DATABASE:student_oj_sandbox}?useSSL=false&useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_0900_ai_ci&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&allowMultiQueries=true
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: ${SANDBOX_MYSQL_USERNAME:sandbox}
+      password: ${SANDBOX_MYSQL_PASSWORD:sandbox123}
+      maximum-pool-size: ${SANDBOX_DB_POOL_SIZE:32}
+      connection-timeout: 5000
+  # AI 建议（DeepSeek 外部 API）
+  ai:
+    mode: ${STUDENTOJ_AI_MODE:auto}
+    deepseek:
+      base-url: ${DEEPSEEK_BASE_URL:https://api.deepseek.com}
+      model: ${DEEPSEEK_MODEL:deepseek-chat}
+      api-key: ${DEEPSEEK_API_KEY:}
+      timeout-seconds: ${DEEPSEEK_TIMEOUT_SECONDS:20}
+
+# LeetCode SQL 题目爬虫
+leetcode:
+  crawler:
+    enabled: ${LEETCODE_CRAWLER_ENABLED:false}
+    graphql-url: ${LEETCODE_GRAPHQL_URL:https://leetcode.cn/graphql}
+    base-url: ${LEETCODE_BASE_URL:https://leetcode.cn}
+    category-slug: database
+    page-size: ${LEETCODE_PAGE_SIZE:50}
+    request-min-delay-ms: ${LEETCODE_MIN_DELAY_MS:1000}
+    request-max-delay-ms: ${LEETCODE_MAX_DELAY_MS:2000}
+    user-agent: ${LEETCODE_USER_AGENT:Mozilla/5.0 StudentOJ SQL Crawler}
+    cookie: ${LEETCODE_COOKIE:}
+    scheduled-cron: ${LEETCODE_SYNC_CRON:0 0 2 * * ?}
+    sync-on-startup: ${LEETCODE_SYNC_ON_STARTUP:false}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    tags:
+      application: ${spring.application.name}

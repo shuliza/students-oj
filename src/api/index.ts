@@ -135,6 +135,19 @@ export const teacherApi = {
   async resetStudentPassword(id: number, newPassword?: string) {
     await http.post(`/teacher/students/${id}/reset-password`, { newPassword })
   },
+  async teachers() {
+    const { data } = await http.get<User[]>('/teacher/teachers')
+    return data
+  },
+  async createTeacher(payload: { username: string; realName: string; email?: string; password?: string }) {
+    await http.post('/teacher/teachers', payload)
+  },
+  async updateTeacherStatus(id: number, status: 'ACTIVE' | 'DISABLED') {
+    await http.put(`/teacher/teachers/${id}/status`, { status })
+  },
+  async resetTeacherPassword(id: number, newPassword?: string) {
+    await http.post(`/teacher/teachers/${id}/reset-password`, { newPassword })
+  },
   async groups() {
     const { data } = await http.get<ClassGroup[]>('/teacher/groups')
     return data

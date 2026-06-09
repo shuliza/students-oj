@@ -14,6 +14,7 @@ const theme = useThemeStore()
 const host = ref<HTMLElement | null>(null)
 const chart = shallowRef<echarts.ECharts | null>(null)
 let observer: ResizeObserver | null = null
+let resizeRaf = 0
 
 // canvas 不认识 CSS 变量，渲染前把 var(--xxx) 解析成真实颜色值
 const resolveVars = (input: unknown): unknown => {
@@ -50,7 +51,14 @@ const init = () => {
 
 onMounted(() => {
   init()
-  observer = new ResizeObserver(() => chart.value?.resize())
+  // rAF 节流：多次 resize 通知合并为每帧一次，避免容器宽度连续变化时反复重排
+  observer = new ResizeObserver(() => {
+    if (resizeRaf) return
+    resizeRaf = requestAnimationFrame(() => {
+      resizeRaf = 0
+      chart.value?.resize()
+    })
+  })
   if (host.value) observer.observe(host.value)
 })
 
@@ -58,6 +66,7 @@ watch(() => props.option, render, { deep: true })
 watch(() => theme.mode, () => init())
 
 onBeforeUnmount(() => {
+  if (resizeRaf) cancelAnimationFrame(resizeRaf)
   observer?.disconnect()
   chart.value?.dispose()
 })
