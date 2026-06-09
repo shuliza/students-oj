@@ -8,7 +8,9 @@ services:
       - "3307:3306"
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./deploy/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      # initdb 脚本按文件名字母序执行：先建表种子(01)，再灌 323 题题库(02)
+      - ./deploy/mysql/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - ./deploy/mysql/02-problems.sql:/docker-entrypoint-initdb.d/02-problems.sql:ro
     command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_ai_ci", "--max-connections=300"]
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
