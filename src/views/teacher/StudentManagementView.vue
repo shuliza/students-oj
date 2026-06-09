@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, reactive, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import PageHeader from '@/components/ui/PageHeader.vue'
 import { teacherApi } from '@/api'
 import type { ClassGroup, User } from '@/types'
 
@@ -177,20 +178,15 @@ onMounted(async () => {
 
 <template>
   <div class="page">
-    <div class="toolbar">
-      <div>
-        <h1 class="page-title">学生管理</h1>
-        <p class="page-subtitle">查看学生账号、班级分组和学习状态。</p>
-      </div>
-      <div class="toolbar">
-        <el-input v-model="keyword" placeholder="姓名 / 学号" clearable style="width: 220px" />
-        <el-select v-model="group" placeholder="班级" clearable style="width: 160px">
-          <el-option v-for="item in groups" :key="item.id" :label="item.name" :value="item.name" />
-        </el-select>
-        <el-button @click="handleTemplateExport">模板导出</el-button>
-        <el-button type="success" @click="openCreate">单个导入</el-button>
-        <el-button type="primary" :loading="importing" @click="handleBatchImport">批量导入</el-button>
-      </div>
+    <PageHeader title="学生管理" subtitle="查看学生账号、班级分组和学习状态。" />
+    <div class="toolbar toolbar-controls">
+      <el-input v-model="keyword" placeholder="姓名 / 学号" clearable style="width: 220px" />
+      <el-select v-model="group" placeholder="班级" clearable style="width: 160px">
+        <el-option v-for="item in groups" :key="item.id" :label="item.name" :value="item.name" />
+      </el-select>
+      <el-button @click="handleTemplateExport">模板导出</el-button>
+      <el-button type="success" @click="openCreate">单个导入</el-button>
+      <el-button type="primary" :loading="importing" @click="handleBatchImport">批量导入</el-button>
     </div>
     <el-card class="section-card">
       <el-table :data="list">
@@ -260,3 +256,9 @@ onMounted(async () => {
     </el-dialog>
   </div>
 </template>
+
+<style scoped>
+.toolbar-controls {
+  justify-content: flex-start;
+}
+</style>

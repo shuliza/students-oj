@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Plus } from '@element-plus/icons-vue'
+import PageHeader from '@/components/ui/PageHeader.vue'
+import EmptyState from '@/components/ui/EmptyState.vue'
 import { teacherApi } from '@/api'
 import type { ClassGroup, User } from '@/types'
 
@@ -181,14 +184,13 @@ onMounted(fetchGroups)
 
 <template>
   <div class="page">
-    <div class="toolbar">
-      <div>
-        <h1 class="page-title">学生分组</h1>
-        <p class="page-subtitle">按班级、实验批次或专项练习组织学生。</p>
-      </div>
-      <el-button type="primary" @click="openCreateDialog">新建分组</el-button>
-    </div>
-    <div class="grid-2">
+    <PageHeader title="学生分组" subtitle="按班级、实验批次或专项练习组织学生。">
+      <template #actions>
+        <el-button type="primary" :icon="Plus" @click="openCreateDialog">新建分组</el-button>
+      </template>
+    </PageHeader>
+    <EmptyState v-if="!loading && !groups.length" description="还没有分组，点右上角新建一个吧" />
+    <div v-else class="grid-2">
       <el-card v-for="item in groups" :key="item.id" class="section-card" v-loading="loading">
         <div class="toolbar">
           <h2 class="card-title">{{ item.name }}</h2>

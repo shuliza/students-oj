@@ -1,0 +1,108 @@
+/* ============================================================
+   Element Plus 主题覆盖 —— 全部挂接到设计 token
+   ============================================================ */
+
+:root,
+[data-theme="light"],
+[data-theme="dark"] {
+  --el-color-primary: var(--color-primary);
+  --el-color-primary-light-3: var(--color-primary-hover);
+  --el-color-primary-light-5: var(--color-primary-hover);
+  --el-color-primary-light-7: var(--color-primary-soft);
+  --el-color-primary-light-8: var(--color-primary-soft);
+  --el-color-primary-light-9: var(--color-primary-soft);
+  --el-color-primary-dark-2: var(--color-primary-active);
+
+  --el-color-success: var(--color-success);
+  --el-color-warning: var(--color-warning);
+  --el-color-danger: var(--color-danger);
+  --el-color-error: var(--color-danger);
+  --el-color-info: var(--color-info);
+
+  --el-border-radius-base: var(--radius-md);
+  --el-border-radius-small: var(--radius-sm);
+  --el-border-color: var(--color-border);
+  --el-border-color-light: var(--color-border);
+  --el-border-color-lighter: var(--color-border);
+
+  --el-text-color-primary: var(--color-text);
+  --el-text-color-regular: var(--color-text);
+  --el-text-color-secondary: var(--color-muted);
+  --el-text-color-placeholder: var(--color-subtle);
+
+  --el-bg-color: var(--color-surface);
+  --el-bg-color-overlay: var(--color-elevated);
+  --el-fill-color-blank: var(--color-surface);
+  --el-fill-color-light: var(--color-surface-2);
+  --el-fill-color-lighter: var(--color-surface-2);
+  --el-mask-color: rgba(15, 23, 42, 0.45);
+}
+
+.el-button {
+  font-weight: 600;
+}
+
+.el-button:not(.is-text):not(.is-link) {
+  box-shadow: none;
+}
+
+.el-card {
+  border-color: var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.el-table {
+  --el-table-header-bg-color: var(--color-surface-2);
+  --el-table-header-text-color: var(--color-muted);
+  --el-table-row-hover-bg-color: var(--color-surface-3);
+  --el-table-border-color: var(--color-border);
+  --el-table-bg-color: var(--color-surface);
+  --el-table-tr-bg-color: var(--color-surface);
+  --el-table-text-color: var(--color-text);
+  font-size: var(--text-sm);
+}
+
+.el-table th.el-table__cell {
+  font-weight: 700;
+}
+
+.el-tag {
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+}
+
+.el-dialog {
+  border-radius: var(--radius-lg);
+  background: var(--color-elevated);
+}
+
+.el-dialog__header {
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.el-dialog__footer {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.el-input__wrapper,
+.el-select__wrapper,
+.el-textarea__inner {
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 1px var(--color-border) inset;
+}
+
+.el-input__wrapper:hover,
+.el-select__wrapper:hover,
+.el-textarea__inner:hover {
+  box-shadow: 0 0 0 1px var(--color-border-strong) inset;
+}
+
+.el-input__wrapper.is-focus,
+.el-select__wrapper.is-focused,
+.el-textarea__inner:focus {
+  box-shadow: 0 0 0 1px var(--color-primary) inset;
+}

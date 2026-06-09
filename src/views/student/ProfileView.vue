@@ -2,6 +2,7 @@
 import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
+import PageHeader from '@/components/ui/PageHeader.vue'
 import { useAuthStore } from '@/stores/auth'
 import { authApi } from '@/api'
 
@@ -70,10 +71,7 @@ const submitPassword = async () => {
 
 <template>
   <div class="page">
-    <div>
-      <h1 class="page-title">个人中心</h1>
-      <p class="page-subtitle">账号信息、班级与学习状态。</p>
-    </div>
+    <PageHeader title="个人中心" subtitle="账号信息、班级与学习状态。" />
     <el-card class="section-card">
       <el-descriptions :column="2" border>
         <el-descriptions-item label="姓名">{{ auth.user?.realName }}</el-descriptions-item>

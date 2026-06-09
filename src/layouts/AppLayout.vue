@@ -1,27 +1,37 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { ElMessageBox } from 'element-plus'
 import {
+  ArrowDown,
   Collection,
   DataAnalysis,
   Download,
   EditPen,
+  Expand,
+  Fold,
   List,
+  Menu as MenuIcon,
   School,
   SwitchButton,
   TrendCharts,
   User,
   UserFilled
 } from '@element-plus/icons-vue'
+import ThemeToggle from '@/components/ui/ThemeToggle.vue'
 import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
+const collapsed = ref(false)
+const mobileOpen = ref(false)
+
 const isTeacherArea = computed(() => route.path.startsWith('/teacher'))
 const isSqlWorkspace = computed(() => route.name === 'sql-editor')
-const brand = computed(() => (isTeacherArea.value ? 'SQL OJ 教师端' : 'SQL OJ 学生端'))
+const brandTitle = computed(() => 'SQL OJ')
+const brandSub = computed(() => (isTeacherArea.value ? '教师工作台' : '学习中心'))
 
 const studentMenus = [
   { label: '学习首页', path: '/student/dashboard', icon: DataAnalysis },
@@ -40,205 +50,396 @@ const teacherMenus = [
 ]
 
 const menus = computed(() => (isTeacherArea.value ? teacherMenus : studentMenus))
+const currentTitle = computed(() => {
+  const hit = menus.value.find(
+    (m) => route.path === m.path || route.path.startsWith(m.path.replace(/\/\d+$/, '') + '/')
+  )
+  return (route.meta.title as string) ?? hit?.label ?? 'SQL OJ'
+})
+
+const isActive = (path: string) => {
+  const base = path.replace(/\/\d+$/, '')
+  return route.path === path || route.path.startsWith(base + '/') || route.path.startsWith(path + '/')
+}
+
+const navigate = (path: string) => {
+  mobileOpen.value = false
+  router.push(path)
+}
 
 const logout = async () => {
-  await auth.logout()
-  router.push('/login')
+  try {
+    await ElMessageBox.confirm('确认退出登录？', '提示', { type: 'warning' })
+    await auth.logout()
+    router.push('/login')
+  } catch {}
 }
+
+const initials = computed(() => auth.user?.realName?.slice(0, 1) ?? 'U')
 </script>
 
+<!-- PLACEHOLDER_TEMPLATE -->
 <template>
-  <div class="layout" :class="{ 'workspace-layout': isSqlWorkspace }">
-    <aside v-if="!isSqlWorkspace" class="sidebar">
-      <div class="brand">{{ brand }}</div>
-      <div class="rail-label">SQL Training</div>
+  <!-- SQL 工作台：全屏沉浸，不套用通用布局 -->
+  <div v-if="isSqlWorkspace" class="workspace-shell">
+    <router-view />
+  </div>
+
+  <div v-else class="layout" :class="{ collapsed }">
+    <!-- 移动端遮罩 -->
+    <div v-if="mobileOpen" class="scrim" @click="mobileOpen = false"></div>
+
+    <aside class="sidebar" :class="{ open: mobileOpen }">
+      <div class="brand">
+        <span class="brand-mark">SQL</span>
+        <div v-show="!collapsed" class="brand-text">
+          <strong>{{ brandTitle }}</strong>
+          <span>{{ brandSub }}</span>
+        </div>
+      </div>
+
       <nav class="menu">
-        <router-link
+        <a
           v-for="item in menus"
           :key="item.path"
-          :to="item.path"
           class="menu-item"
-          :class="{ active: route.path === item.path || route.path.startsWith(item.path + '/') }"
+          :class="{ active: isActive(item.path) }"
+          :title="collapsed ? item.label : ''"
+          @click="navigate(item.path)"
         >
           <el-icon><component :is="item.icon" /></el-icon>
-          <span>{{ item.label }}</span>
-        </router-link>
+          <span v-show="!collapsed">{{ item.label }}</span>
+        </a>
       </nav>
+
+      <button class="collapse-btn" type="button" @click="collapsed = !collapsed">
+        <el-icon><component :is="collapsed ? Expand : Fold" /></el-icon>
+        <span v-show="!collapsed">收起菜单</span>
+      </button>
     </aside>
-    <main class="main">
-      <header v-if="!isSqlWorkspace" class="header">
-        <div>
-          <strong>{{ route.meta.title ?? '智能 SQL OJ 判题系统' }}</strong>
-          <span class="header-sub">Vue3 / TypeScript / Element Plus</span>
+
+    <div class="main">
+      <header class="header">
+        <div class="header-left">
+          <button class="icon-btn mobile-only" type="button" @click="mobileOpen = true">
+            <el-icon><MenuIcon /></el-icon>
+          </button>
+          <div class="crumb">
+            <span class="crumb-root">{{ brandSub }}</span>
+            <span class="crumb-sep">/</span>
+            <strong class="crumb-current">{{ currentTitle }}</strong>
+          </div>
         </div>
-        <div class="user">
-          <el-tag effect="plain">{{ auth.user?.role ?? 'GUEST' }}</el-tag>
-          <span>{{ auth.user?.realName }}</span>
-          <el-button size="small" :icon="SwitchButton" @click="logout">退出</el-button>
+
+        <div class="header-right">
+          <ThemeToggle />
+          <el-dropdown trigger="click">
+            <div class="user-chip">
+              <span class="avatar">{{ initials }}</span>
+              <div class="user-meta">
+                <strong>{{ auth.user?.realName ?? '用户' }}</strong>
+                <span>{{ auth.user?.role ?? 'GUEST' }}</span>
+              </div>
+              <el-icon class="chev"><ArrowDown /></el-icon>
+            </div>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item :icon="SwitchButton" @click="logout">退出登录</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
       </header>
-      <section class="content" :class="{ 'workspace-content': isSqlWorkspace }">
+
+      <section class="content">
         <router-view />
       </section>
-    </main>
+    </div>
   </div>
 </template>
+<!-- PLACEHOLDER_TEMPLATE -->
 
 <style scoped>
+.workspace-shell {
+  min-height: 100vh;
+}
+
 .layout {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 252px minmax(0, 1fr);
-  background:
-    radial-gradient(circle at top left, rgba(219, 234, 254, 0.86), transparent 360px),
-    var(--color-bg);
+  grid-template-columns: 248px minmax(0, 1fr);
+  background: var(--color-bg);
+  transition: grid-template-columns 0.2s ease;
 }
 
-.workspace-layout {
-  display: block;
-  background: #171717;
+.layout.collapsed {
+  grid-template-columns: 76px minmax(0, 1fr);
 }
 
 .sidebar {
   position: sticky;
   top: 0;
   height: 100vh;
-  padding: 26px 16px;
-  background:
-    linear-gradient(180deg, rgba(30, 64, 175, 0.18), rgba(15, 23, 42, 0) 44%),
-    var(--color-sidebar);
-  color: #dbe5f4;
-  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5) var(--space-3);
+  background: var(--color-sidebar);
+  border-right: 1px solid var(--color-border);
 }
 
 .brand {
-  margin-bottom: 6px;
-  padding: 0 10px;
-  color: #ffffff;
-  font-size: 24px;
-  line-height: 1.25;
-  font-weight: 780;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 0 var(--space-2) var(--space-6);
 }
 
-.rail-label {
-  margin: 0 10px 30px;
-  color: #93a4bd;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.brand-text strong {
+  color: var(--color-text-strong);
+  font-size: var(--text-md);
+  font-weight: 750;
+}
+
+.brand-text span {
+  color: var(--color-muted);
+  font-size: var(--text-xs);
 }
 
 .menu {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-1);
+  flex: 1;
 }
 
 .menu-item {
-  min-height: 44px;
-  padding: 0 12px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  border-radius: 8px;
-  color: #cbd5e1;
-  font-size: 14px;
-  font-weight: 650;
+  gap: var(--space-3);
+  min-height: 42px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--color-sidebar-text);
+  font-size: var(--text-base);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
 .menu-item .el-icon {
-  width: 18px;
-  color: #8ea2be;
+  flex: 0 0 18px;
   font-size: 18px;
 }
 
-.menu-item.active,
 .menu-item:hover {
-  background: #1e40af;
-  color: #ffffff;
+  background: var(--color-surface-3);
+  color: var(--color-text-strong);
 }
 
-.menu-item.active .el-icon,
-.menu-item:hover .el-icon {
-  color: #ffffff;
+.menu-item.active {
+  background: var(--color-sidebar-active-bg);
+  color: var(--color-sidebar-active-text);
+}
+
+.collapse-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 40px;
+  padding: 0 var(--space-3);
+  margin-top: var(--space-3);
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.collapse-btn:hover {
+  background: var(--color-surface-3);
+  color: var(--color-text);
 }
 
 .main {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
-  height: 68px;
-  padding: 0 28px;
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  height: 64px;
+  padding: 0 var(--space-6);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(216, 225, 238, 0.9);
-  background: rgba(255, 255, 255, 0.86);
+  border-bottom: 1px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface) 85%, transparent);
   backdrop-filter: blur(12px);
 }
 
-.header strong {
-  color: #0f172a;
-  font-size: 15px;
-}
-
-.header-sub {
-  margin-left: 12px;
-  color: var(--color-muted);
-  font-size: 13px;
-}
-
-.user {
+.header-left,
+.header-right {
   display: flex;
   align-items: center;
-  gap: 12px;
-  color: #334155;
-  font-size: 14px;
+  gap: var(--space-3);
+}
+
+.crumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-base);
+}
+
+.crumb-root {
+  color: var(--color-muted);
+}
+
+.crumb-sep {
+  color: var(--color-subtle);
+}
+
+.crumb-current {
+  color: var(--color-text-strong);
+  font-weight: 700;
+}
+
+.icon-btn {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-muted);
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.user-chip:hover {
+  background: var(--color-surface-3);
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.user-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.user-meta strong {
+  font-size: var(--text-sm);
+  color: var(--color-text-strong);
+}
+
+.user-meta span {
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+}
+
+.chev {
+  color: var(--color-subtle);
+  font-size: 12px;
 }
 
 .content {
-  padding: 26px 28px 42px;
+  flex: 1;
+  padding: var(--space-6);
 }
 
-.workspace-content {
-  height: 100vh;
-  padding: 0;
-  overflow: hidden;
+.scrim {
+  display: none;
+}
+
+.mobile-only {
+  display: none;
 }
 
 @media (max-width: 920px) {
-  .layout {
+  .layout,
+  .layout.collapsed {
     grid-template-columns: 1fr;
   }
 
   .sidebar {
-    position: static;
-    height: auto;
-    padding: 16px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: var(--z-drawer);
+    width: 248px;
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
   }
 
-  .menu {
-    flex-direction: row;
-    overflow-x: auto;
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-pop);
   }
 
-  .menu-item {
-    flex: 0 0 auto;
+  .scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-drawer) - 1);
+    background: rgba(15, 23, 42, 0.45);
   }
 
-  .header {
-    height: auto;
-    min-height: 64px;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 16px;
-    flex-direction: column;
+  .mobile-only {
+    display: grid;
+  }
+
+  .user-meta {
+    display: none;
   }
 
   .content {
-    padding: 18px 16px 32px;
+    padding: var(--space-4);
   }
 }
 </style>

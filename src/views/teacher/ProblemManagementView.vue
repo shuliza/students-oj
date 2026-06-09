@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import StatusTag from '@/components/StatusTag.vue'
+import StatusTag from '@/components/ui/StatusTag.vue'
 import { problemAdminApi } from '@/api'
 import type { ProblemAdmin, ProblemSavePayload } from '@/types'
 

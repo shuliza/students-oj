@@ -222,38 +222,38 @@ const tooltip = (day: DayCell) => `${day.count} 个提交, ${formatDisplayDate(d
   padding: 0;
   border: 0;
   border-radius: 4px;
-  background: #e2e8f0;
+  background: var(--heat-0);
   cursor: default;
 }
 
 .day-cell:hover,
 .day-cell:focus-visible {
-  outline: 2px solid rgba(30, 64, 175, 0.35);
+  outline: 2px solid var(--color-primary);
   outline-offset: 1px;
 }
 
 .day-cell.today {
-  box-shadow: 0 0 0 1px rgba(30, 64, 175, 0.75);
+  box-shadow: 0 0 0 1px var(--color-primary);
 }
 
 .level-0 {
-  background: #e2e8f0;
+  background: var(--heat-0);
 }
 
 .level-1 {
-  background: #bbf7d0;
+  background: var(--heat-1);
 }
 
 .level-2 {
-  background: #4ade80;
+  background: var(--heat-2);
 }
 
 .level-3 {
-  background: #22c55e;
+  background: var(--heat-3);
 }
 
 .level-4 {
-  background: #15803d;
+  background: var(--heat-4);
 }
 
 .tooltip {

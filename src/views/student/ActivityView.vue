@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
+import { Calendar, CircleCheck, DataLine, TrendCharts } from '@element-plus/icons-vue'
 import ActivityHeatmap from '@/components/ActivityHeatmap.vue'
+import PageHeader from '@/components/ui/PageHeader.vue'
+import StatCard from '@/components/ui/StatCard.vue'
 import { useStatisticsStore } from '@/stores/statistics'
 
 const store = useStatisticsStore()
@@ -11,15 +14,12 @@ onMounted(async () => {
 
 <template>
   <div class="page">
-    <div>
-      <h1 class="page-title">活跃统计</h1>
-      <p class="page-subtitle">当天提交过即记为活跃。</p>
-    </div>
+    <PageHeader title="活跃统计" subtitle="当天提交过即记为活跃。" />
     <div class="metric-grid">
-      <div class="metric-card"><div class="metric-label">连续活跃</div><div class="metric-value">{{ store.overview.activeDays }} 天</div></div>
-      <div class="metric-card"><div class="metric-label">今日提交</div><div class="metric-value">{{ store.overview.todaySubmissions }}</div></div>
-      <div class="metric-card"><div class="metric-label">已通过</div><div class="metric-value">{{ store.overview.acceptedProblems }}</div></div>
-      <div class="metric-card"><div class="metric-label">正确率</div><div class="metric-value">{{ store.overview.accuracy }}%</div></div>
+      <StatCard label="连续活跃" :value="`${store.overview.activeDays} 天`" :icon="Calendar" accent="warning" />
+      <StatCard label="今日提交" :value="store.overview.todaySubmissions" :icon="DataLine" accent="primary" />
+      <StatCard label="已通过" :value="store.overview.acceptedProblems" :icon="CircleCheck" accent="success" />
+      <StatCard label="正确率" :value="`${store.overview.accuracy}%`" :icon="TrendCharts" accent="info" />
     </div>
     <el-card class="section-card">
       <h2 class="card-title">活跃日历</h2>

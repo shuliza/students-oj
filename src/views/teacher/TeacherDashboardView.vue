@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
+import { Collection, DataLine, TrendCharts, UserFilled } from '@element-plus/icons-vue'
 import ActivityHeatmap from '@/components/ActivityHeatmap.vue'
-import StatusTag from '@/components/StatusTag.vue'
+import StatusTag from '@/components/ui/StatusTag.vue'
+import PageHeader from '@/components/ui/PageHeader.vue'
+import StatCard from '@/components/ui/StatCard.vue'
+import ChartBox from '@/components/ui/ChartBox.vue'
 import { statisticsApi, submissionApi, teacherApi } from '@/api'
 import { useProblemStore } from '@/stores/problem'
 import { useStatisticsStore } from '@/stores/statistics'
@@ -35,6 +39,59 @@ const scopeName = computed(() => {
   if (!selectedGroup.value) return '全部班级'
   const selectedStudent = studentsInGroup.value.find((item) => item.id === selectedStudentId.value)
   return selectedStudent ? `${selectedGroup.value} / ${selectedStudent.realName}` : selectedGroup.value
+})
+
+// 题目难度分布（饼图）
+const difficultyOption = computed(() => {
+  const counter = { EASY: 0, MEDIUM: 0, HARD: 0 }
+  problemStore.problems.forEach((p) => {
+    counter[p.difficulty] = (counter[p.difficulty] ?? 0) + 1
+  })
+  return {
+    tooltip: { trigger: 'item' },
+    legend: { bottom: 0, textStyle: { color: 'var(--color-text)' } },
+    series: [
+      {
+        type: 'pie',
+        radius: ['52%', '74%'],
+        avoidLabelOverlap: true,
+        itemStyle: { borderColor: 'var(--color-surface)', borderWidth: 2 },
+        label: { show: false },
+        data: [
+          { value: counter.EASY, name: '简单', itemStyle: { color: '#16a34a' } },
+          { value: counter.MEDIUM, name: '中等', itemStyle: { color: '#d97706' } },
+          { value: counter.HARD, name: '困难', itemStyle: { color: '#dc2626' } }
+        ]
+      }
+    ]
+  }
+})
+
+// 近 14 天提交趋势（柱图）
+const submissionTrendOption = computed(() => {
+  const days = statisticsStore.activity.slice(-14)
+  return {
+    grid: { left: 8, right: 12, top: 24, bottom: 24, containLabel: true },
+    tooltip: { trigger: 'axis' },
+    xAxis: {
+      type: 'category',
+      data: days.map((d) => d.date.slice(5)),
+      axisLabel: { color: 'var(--color-text)' }
+    },
+    yAxis: {
+      type: 'value',
+      splitLine: { lineStyle: { color: 'var(--color-border)' } },
+      axisLabel: { color: 'var(--color-text)' }
+    },
+    series: [
+      {
+        type: 'bar',
+        data: days.map((d) => d.count),
+        barWidth: '52%',
+        itemStyle: { color: 'var(--color-primary)', borderRadius: [4, 4, 0, 0] }
+      }
+    ]
+  }
 })
 
 watch(selectedGroup, async () => {
@@ -90,13 +147,9 @@ async function rejudge(row: { id: number }) {
 
 <template>
   <div class="page">
-    <div class="toolbar">
-      <div>
-        <h1 class="page-title">教学数据看板</h1>
-        <p class="page-subtitle">班级、题库、提交与通过率概览。</p>
-      </div>
-      <div class="toolbar">
-        <el-select v-model="selectedGroup" placeholder="班级" clearable style="width: 180px">
+    <PageHeader title="教学数据看板" subtitle="班级、题库、提交与通过率概览。">
+      <template #actions>
+        <el-select v-model="selectedGroup" placeholder="班级" clearable style="width: 170px">
           <el-option v-for="name in groupOptions" :key="name" :label="name" :value="name" />
         </el-select>
         <el-select
@@ -105,7 +158,7 @@ async function rejudge(row: { id: number }) {
           clearable
           filterable
           :disabled="!selectedGroup"
-          style="width: 180px"
+          style="width: 170px"
         >
           <el-option
             v-for="student in studentsInGroup"
@@ -114,17 +167,28 @@ async function rejudge(row: { id: number }) {
             :value="student.id"
           />
         </el-select>
-      </div>
-    </div>
+      </template>
+    </PageHeader>
 
     <div class="scope-line">当前范围：{{ scopeName }}</div>
 
     <div class="metric-grid">
-      <div class="metric-card"><div class="metric-label">学生数量</div><div class="metric-value">{{ statisticsStore.overview.students }}</div></div>
-      <div class="metric-card"><div class="metric-label">题目数量</div><div class="metric-value">{{ statisticsStore.overview.problems }}</div></div>
-      <div class="metric-card"><div class="metric-label">今日做题数量</div><div class="metric-value">{{ statisticsStore.overview.todaySubmissions }}</div></div>
-      <div class="metric-card"><div class="metric-label">提交次数</div><div class="metric-value">{{ statisticsStore.overview.submissions.toLocaleString() }}</div></div>
-      <div class="metric-card"><div class="metric-label">平均通过率</div><div class="metric-value">{{ statisticsStore.overview.passRate }}%</div></div>
+      <StatCard label="学生数量" :value="statisticsStore.overview.students" :icon="UserFilled" accent="primary" />
+      <StatCard label="题目数量" :value="statisticsStore.overview.problems" :icon="Collection" accent="info" />
+      <StatCard label="今日做题数量" :value="statisticsStore.overview.todaySubmissions" :icon="DataLine" accent="success" />
+      <StatCard label="提交次数" :value="statisticsStore.overview.submissions.toLocaleString()" :icon="DataLine" accent="warning" />
+      <StatCard label="平均通过率" :value="`${statisticsStore.overview.passRate}%`" :icon="TrendCharts" accent="danger" />
+    </div>
+
+    <div class="grid-2">
+      <el-card class="section-card">
+        <h2 class="card-title">近 14 天提交趋势</h2>
+        <ChartBox :option="submissionTrendOption" height="260px" />
+      </el-card>
+      <el-card class="section-card">
+        <h2 class="card-title">题目难度分布</h2>
+        <ChartBox :option="difficultyOption" height="260px" />
+      </el-card>
     </div>
 
     <div class="grid-2">

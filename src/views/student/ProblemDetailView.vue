@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { EditPen } from '@element-plus/icons-vue'
+import PageHeader from '@/components/ui/PageHeader.vue'
 import { problemApi } from '@/api'
 import type { Problem } from '@/types'
 
@@ -67,13 +69,11 @@ onMounted(async () => {
 
 <template>
   <div v-if="problem" class="page">
-    <div class="toolbar">
-      <div>
-        <h1 class="page-title">{{ problem.title }}</h1>
-        <p class="page-subtitle">难度：{{ problem.difficulty }} / 通过率：{{ problem.passRate }}%</p>
-      </div>
-      <el-button type="primary" @click="router.push(`/student/editor/${problem.id}`)">打开 SQL 编辑器</el-button>
-    </div>
+    <PageHeader :title="problem.title" :subtitle="`难度：${problem.difficulty} / 通过率：${problem.passRate}%`">
+      <template #actions>
+        <el-button type="primary" :icon="EditPen" @click="router.push(`/student/editor/${problem.id}`)">打开 SQL 编辑器</el-button>
+      </template>
+    </PageHeader>
     <el-card class="section-card">
       <h2 class="card-title">题目描述</h2>
       <div v-if="isHtmlDescription" class="problem-html" v-html="problem.description"></div>

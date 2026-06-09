@@ -1,0 +1,154 @@
+/* ============================================================
+   Design Tokens — 单一设计系统底座
+   亮/暗双主题，通过 <html data-theme="light|dark"> 切换。
+   所有颜色/间距/圆角/阴影/字体从此处取值。
+   ============================================================ */
+
+:root {
+  /* 间距尺度（4px 基准） */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* 圆角 */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
+
+  /* 字体 */
+  --font-sans: "Inter", "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, "Courier New", monospace;
+
+  /* 字号 */
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-md: 15px;
+  --text-lg: 18px;
+  --text-xl: 22px;
+  --text-2xl: 28px;
+  --text-3xl: 34px;
+
+  /* 层级 */
+  --z-sticky: 100;
+  --z-drawer: 900;
+  --z-modal: 1000;
+  --z-toast: 1100;
+
+  /* 品牌主色（与主题无关的基准色相） */
+  --brand-500: #4f46e5;
+  --brand-600: #4338ca;
+  --brand-400: #6366f1;
+}
+
+/* ---------- 亮色主题（默认） ---------- */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-primary-active: #3730a3;
+  --color-primary-soft: #eef2ff;
+  --color-on-primary: #ffffff;
+
+  --color-bg: #f5f6fa;
+  --color-bg-soft: #eef1f7;
+  --color-surface: #ffffff;
+  --color-surface-2: #f8fafc;
+  --color-surface-3: #f1f5f9;
+  --color-elevated: #ffffff;
+
+  --color-sidebar: #ffffff;
+  --color-sidebar-text: #475569;
+  --color-sidebar-active-bg: #eef2ff;
+  --color-sidebar-active-text: #4338ca;
+
+  --color-border: #e6e8ef;
+  --color-border-strong: #cdd3e0;
+
+  --color-text: #1a2233;
+  --color-text-strong: #0f172a;
+  --color-muted: #64748b;
+  --color-subtle: #94a3b8;
+
+  --color-success: #16a34a;
+  --color-success-soft: #dcfce7;
+  --color-danger: #dc2626;
+  --color-danger-soft: #fee2e2;
+  --color-warning: #d97706;
+  --color-warning-soft: #fef3c7;
+  --color-info: #0ea5e9;
+  --color-info-soft: #e0f2fe;
+
+  --heat-0: #e3e6ee;
+  --heat-1: #a5b4fc;
+  --heat-2: #6366f1;
+  --heat-3: #4338ca;
+  --heat-4: #312e81;
+
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.04);
+  --shadow-raised: 0 12px 32px rgba(15, 23, 42, 0.12);
+  --shadow-pop: 0 8px 28px rgba(15, 23, 42, 0.16);
+}
+
+/* ---------- 暗色主题 ---------- */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-primary: #818cf8;
+  --color-primary-hover: #a5b4fc;
+  --color-primary-active: #c7d2fe;
+  --color-primary-soft: #1e1b4b;
+  --color-on-primary: #0b1020;
+
+  --color-bg: #0b1020;
+  --color-bg-soft: #0e1428;
+  --color-surface: #141a2e;
+  --color-surface-2: #1a2138;
+  --color-surface-3: #222a44;
+  --color-elevated: #1a2138;
+
+  --color-sidebar: #0e1428;
+  --color-sidebar-text: #94a3b8;
+  --color-sidebar-active-bg: #1e2545;
+  --color-sidebar-active-text: #c7d2fe;
+
+  --color-border: #283047;
+  --color-border-strong: #3a4566;
+
+  --color-text: #e6eaf2;
+  --color-text-strong: #f8fafc;
+  --color-muted: #93a0b8;
+  --color-subtle: #6b788f;
+
+  --color-success: #34d399;
+  --color-success-soft: #064e3b;
+  --color-danger: #f87171;
+  --color-danger-soft: #4c1d1d;
+  --color-warning: #fbbf24;
+  --color-warning-soft: #4a3209;
+  --color-info: #38bdf8;
+  --color-info-soft: #0c3a52;
+
+  --heat-0: #1e2540;
+  --heat-1: #3730a3;
+  --heat-2: #4f46e5;
+  --heat-3: #6366f1;
+  --heat-4: #a5b4fc;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
+  --shadow-raised: 0 12px 32px rgba(0, 0, 0, 0.55);
+  --shadow-pop: 0 8px 28px rgba(0, 0, 0, 0.6);
+}

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import PageHeader from '@/components/ui/PageHeader.vue'
 import { teacherApi } from '@/api'
 import type { ClassGroup, User } from '@/types'
 
@@ -67,10 +68,7 @@ onMounted(async () => {
 
 <template>
   <div class="page">
-    <div>
-      <h1 class="page-title">成绩导出</h1>
-      <p class="page-subtitle">按班级、学生分组或单个学生导出成绩，文件直接下载到浏览器。</p>
-    </div>
+    <PageHeader title="成绩导出" subtitle="按班级、学生分组或单个学生导出成绩，文件直接下载到浏览器。" />
     <div class="grid-main-side">
       <el-card class="section-card">
         <h2 class="card-title">导出配置</h2>
