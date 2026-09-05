@@ -11,15 +11,6 @@
 
   <modules>
     <module>app</module>
-    <module>auth-common</module>
-    <module>auth-service</module>
-    <module>problem-service</module>
-    <module>judge-service</module>
-    <module>sandbox-service</module>
-    <module>ai-service</module>
-    <module>statistics-service</module>
-    <module>teacher-service</module>
-    <module>leetcode-crawler</module>
   </modules>
 
   <properties>

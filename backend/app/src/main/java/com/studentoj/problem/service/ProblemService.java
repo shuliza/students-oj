@@ -3,6 +3,7 @@ package com.studentoj.problem.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.studentoj.judge.dto.JudgeRequest;
 import com.studentoj.judge.service.JudgeService;
+import com.studentoj.common.web.HtmlSanitizer;
 import com.studentoj.problem.dto.ProblemResponse;
 import com.studentoj.problem.dto.SandboxExecuteResponse;
 import com.studentoj.problem.dto.SubmissionRequest;
@@ -187,7 +188,7 @@ public class ProblemService {
                 passRate,
                 submissions,
                 status,
-                entity.getDescription(),
+                HtmlSanitizer.cleanDescription(entity.getDescription()),
                 entity.getSampleInput(),
                 entity.getSampleOutput()
         );

@@ -8,5 +8,8 @@ public record OverviewResponse(
         Integer activeDays,
         Integer todaySolved,
         Integer todayAttempted,
-        Integer todayPassed) {
+        Integer todayPassed,
+        Integer todaySubmissions,
+        Integer acceptedProblems,
+        Integer streakDays) {
 }

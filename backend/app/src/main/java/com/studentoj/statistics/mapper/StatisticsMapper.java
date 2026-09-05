@@ -48,11 +48,17 @@ public interface StatisticsMapper {
             """)
     int countTodaySolved();
 
+    @Select("SELECT COUNT(*) FROM submission WHERE DATE(submitted_at) = CURRENT_DATE")
+    int countTodaySubmissions();
+
     @Select("SELECT COUNT(DISTINCT activity_date) FROM student_activity")
     int countActiveDays();
 
     @Select("SELECT COUNT(*) FROM submission WHERE user_id = #{userId}")
     int countSubmissionsByUser(@Param("userId") Long userId);
+
+    @Select("SELECT COUNT(*) FROM submission WHERE user_id = #{userId} AND DATE(submitted_at) = CURRENT_DATE")
+    int countTodaySubmissionsByUser(@Param("userId") Long userId);
 
     @Select("""
             SELECT COUNT(*)
@@ -62,6 +68,15 @@ public interface StatisticsMapper {
             WHERE g.name = #{groupName}
             """)
     int countSubmissionsByGroupName(@Param("groupName") String groupName);
+
+    @Select("""
+            SELECT COUNT(*)
+            FROM submission s
+            LEFT JOIN user u ON u.id = s.user_id
+            LEFT JOIN class_group g ON g.id = u.group_id
+            WHERE g.name = #{groupName} AND DATE(s.submitted_at) = CURRENT_DATE
+            """)
+    int countTodaySubmissionsByGroupName(@Param("groupName") String groupName);
 
     @Select("SELECT COUNT(*) FROM submission WHERE user_id = #{userId} AND status = 'ACCEPTED'")
     int countAcceptedByUser(@Param("userId") Long userId);
@@ -117,7 +132,7 @@ public interface StatisticsMapper {
             """)
     int countTodaySolvedByGroupName(@Param("groupName") String groupName);
 
-    @Select("SELECT COUNT(DISTINCT problem_id) FROM submission WHERE user_id = #{userId}")
+    @Select("SELECT COUNT(DISTINCT problem_id) FROM submission WHERE user_id = #{userId} AND status = 'ACCEPTED'")
     int countSolvedByUser(@Param("userId") Long userId);
 
     @Select("SELECT COUNT(DISTINCT problem_id) FROM submission WHERE DATE(submitted_at) = CURRENT_DATE")
@@ -202,11 +217,12 @@ public interface StatisticsMapper {
     int countActiveDaysByGroupName(@Param("groupName") String groupName);
 
     @Select("SELECT activity_date AS date, SUM(submission_count) AS count FROM student_activity " +
-            "GROUP BY activity_date ORDER BY activity_date DESC LIMIT 120")
+            "GROUP BY activity_date ORDER BY activity_date ASC")
     List<Map<String, Object>> selectActivityAggregate();
 
     @Select("SELECT activity_date AS date, submission_count AS count FROM student_activity " +
-            "WHERE user_id = #{userId} ORDER BY activity_date DESC LIMIT 120")
+            "WHERE user_id = #{userId} " +
+            "ORDER BY activity_date ASC")
     List<Map<String, Object>> selectActivityByUser(@Param("userId") Long userId);
 
     @Select("""
@@ -216,8 +232,7 @@ public interface StatisticsMapper {
             LEFT JOIN class_group g ON g.id = u.group_id
             WHERE g.name = #{groupName}
             GROUP BY a.activity_date
-            ORDER BY a.activity_date DESC
-            LIMIT 120
+            ORDER BY a.activity_date ASC
             """)
     List<Map<String, Object>> selectActivityByGroupName(@Param("groupName") String groupName);
 

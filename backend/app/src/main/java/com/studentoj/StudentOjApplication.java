@@ -9,8 +9,8 @@ import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * 单体应用统一入口。整合了原 auth / problem / judge / sandbox / ai / statistics / teacher /
- * leetcode-crawler 八个微服务，所有跨模块通信改为进程内直接调用，不再依赖 RabbitMQ 与服务间 HTTP。
+ * 单体应用统一入口，包含 auth / problem / judge / sandbox / ai / statistics / teacher /
+ * leetcodecrawler 等业务模块。模块间通信均为进程内直接调用。
  *
  * <p>judge 与 problem 模块各自保留了映射同一张表的 Mapper（如 ProblemMapper / SubmissionMapper），
  * 简单类名相同。通过 nameGenerator 让 Mapper bean 以全限定类名命名，避免 bean 名冲突；

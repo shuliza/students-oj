@@ -305,7 +305,7 @@ INSERT INTO class_group(id, name, teacher_name, description, student_count) VALU
   (3, '期末强化组', '王老师', '低通过率题目专项练习', 0)
 ON DUPLICATE KEY UPDATE student_count = VALUES(student_count);
 
--- 用户：password_hash 留空，由 auth-service 启动时用 BCrypt(123456) 回填
+-- 用户：password_hash 留空，由单体应用启动时用 BCrypt(123456) 回填
 INSERT INTO user(id, username, password_hash, real_name, email, role, student_no, group_id, status) VALUES
   (1, 'teacher01', '', '王老师', 'teacher01@example.edu', 'TEACHER', '',         NULL, 'ACTIVE')
 ON DUPLICATE KEY UPDATE real_name = VALUES(real_name);
@@ -383,7 +383,7 @@ ON DUPLICATE KEY UPDATE submission_count = VALUES(submission_count);
 
 -- =================== 沙箱库 ===================
 -- 沙箱执行用账户：可读可写自己的库，不能访问主业务库。
--- 这里只是预留一个空库，sandbox-service 会按题目的 init_sql 临时建表执行。
+-- 这里只是预留一个空库，单体应用中的 sandbox 模块会按题目的 init_sql 临时建表执行。
 USE student_oj_sandbox;
 
 CREATE USER IF NOT EXISTS 'sandbox'@'%' IDENTIFIED BY 'sandbox123';

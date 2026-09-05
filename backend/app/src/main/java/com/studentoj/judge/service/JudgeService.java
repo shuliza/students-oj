@@ -20,8 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
- * 单体内的判题服务：直接调用进程内的 SandboxService 执行 SQL，判题完成后同步落库并记录学生活跃度，
- * 不再经过 RabbitMQ 或 HTTP。
+ * 单体内的判题服务：直接调用进程内的 SandboxService 执行 SQL，判题完成后同步落库并记录学生活跃度。
  */
 @Service
 public class JudgeService {
@@ -114,7 +113,7 @@ public class JudgeService {
     }
 
     /**
-     * 判题结束后同步更新提交记录并累加学生活跃度，替代原先经 RabbitMQ 通知 problem / statistics 的流程。
+     * 判题结束后同步更新提交记录并累加学生活跃度。
      */
     private void persistIfNeeded(JudgeRequest request, JudgeResult result) {
         if (request.submissionId() == null) {

@@ -35,7 +35,7 @@ export const problemApi = {
     return data
   },
   async submit(problemId: number, sql: string) {
-    const { data } = await http.post<Submission>('/submission/judge', { problemId, sqlContent: sql })
+    const { data } = await http.post<Submission>('/submission/judge', { problemId, sqlContent: sql }, { timeout: 120000 })
     return data
   },
   async run(problemId: number, sql: string) {
@@ -81,9 +81,9 @@ export const statisticsApi = {
   async overview() {
     const { data } = await http.get('/statistics/me/overview')
     return {
-      todaySubmissions: data.todaySolved ?? data.todaySubmissions ?? data.submissions ?? 0,
-      acceptedProblems: data.acceptedProblems ?? data.students ?? 0,
-      activeDays: data.activeDays ?? 0,
+      todaySubmissions: data.todaySubmissions ?? 0,
+      acceptedProblems: data.acceptedProblems ?? 0,
+      activeDays: data.streakDays ?? 0,
       accuracy: data.accuracy ?? data.passRate ?? 0,
       students: data.students ?? 0,
       problems: data.problems ?? 0,
@@ -100,9 +100,9 @@ export const statisticsApi = {
   async teacherOverview(params?: { groupName?: string; studentId?: number }) {
     const { data } = await http.get('/statistics/teacher/overview', { params })
     return {
-      todaySubmissions: data.todaySolved ?? data.todaySubmissions ?? 0,
+      todaySubmissions: data.todaySubmissions ?? 0,
       acceptedProblems: data.acceptedProblems ?? 0,
-      activeDays: data.activeDays ?? 0,
+      activeDays: data.streakDays ?? 0,
       accuracy: data.accuracy ?? data.passRate ?? 0,
       students: data.students ?? 0,
       problems: data.problems ?? 0,
@@ -219,7 +219,7 @@ export const aiApi = {
     errorMessage?: string
     studentSql: string
   }) {
-    const { data } = await http.post('/ai/suggestion', request)
+    const { data } = await http.post('/ai/suggestion', request, { timeout: 30000 })
     return data as { suggestion: string; createdAt?: string }
   },
   async history(problemId: number) {

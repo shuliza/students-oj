@@ -8,8 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 学生活跃度记录入口。原先由 statistics 的 RabbitMQ 监听器在收到 judge.finished 后调用，
- * 单体化后改为判题完成时由 JudgeService 进程内直接调用。仍保留按 submission_id 幂等去重。
+ * 学生活跃度记录入口。判题完成时由 JudgeService 进程内直接调用，并按 submission_id 幂等去重。
  */
 @Service
 public class ActivityRecorder {

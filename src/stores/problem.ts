@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import { problemApi, submissionApi } from '@/api'
 import { useAuthStore } from '@/stores/auth'
-import { problems as mockProblems, submissions as mockSubmissions } from '@/api/mock'
 import type { Problem, Submission } from '@/types'
 
 export const useProblemStore = defineStore('problem', {
@@ -14,7 +13,7 @@ export const useProblemStore = defineStore('problem', {
       try {
         this.problems = await problemApi.list()
       } catch {
-        this.problems = mockProblems
+        this.problems = []
       }
     },
     async fetchSubmissions(params?: { groupName?: string; studentId?: number }) {
@@ -22,7 +21,7 @@ export const useProblemStore = defineStore('problem', {
         const auth = useAuthStore()
         this.submissions = auth.isTeacher ? await submissionApi.list(params) : await submissionApi.mine()
       } catch {
-        this.submissions = mockSubmissions
+        this.submissions = []
       }
     }
   }

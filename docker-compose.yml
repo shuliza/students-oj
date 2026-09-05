@@ -4,11 +4,9 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: student_oj
-    ports:
-      - "3307:3306"
+      TZ: Asia/Shanghai
     volumes:
       - mysql-data:/var/lib/mysql
-      # initdb 脚本按文件名字母序执行：先建表种子(01)，再灌 323 题题库(02)
       - ./deploy/mysql/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
       - ./deploy/mysql/02-problems.sql:/docker-entrypoint-initdb.d/02-problems.sql:ro
     command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_ai_ci", "--max-connections=300"]
@@ -20,33 +18,23 @@ services:
 
   redis:
     image: redis:7.4-alpine
-    ports:
-      - "6379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
       retries: 20
 
-  rabbitmq:
-    image: rabbitmq:3.13-management
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 20
-
-  auth-service:
-    image: student-oj-auth-service:${STUDENTOJ_IMAGE_TAG:-0.1.0}
+  app:
+    image: student-oj-app:${STUDENTOJ_IMAGE_TAG:-0.1.0}
     build:
       context: ./backend
       dockerfile: Dockerfile
       args:
-        SERVICE_NAME: auth-service
-    environment: &backend-env
+        SERVICE_NAME: app
+    environment:
+      SERVER_PORT: "8080"
+      TZ: Asia/Shanghai
+      JAVA_TOOL_OPTIONS: -Duser.timezone=Asia/Shanghai
       MYSQL_HOST: mysql
       MYSQL_PORT: "3306"
       MYSQL_DATABASE: student_oj
@@ -54,145 +42,14 @@ services:
       MYSQL_PASSWORD: root
       REDIS_HOST: redis
       REDIS_PORT: "6379"
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: "5672"
-      RABBITMQ_USERNAME: guest
-      RABBITMQ_PASSWORD: guest
-      STUDENTOJ_AUTH_INTERNAL_SECRET: student-oj-internal-v1
-    depends_on:
-      mysql:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    ports:
-      - "8081:8081"
-
-  problem-service:
-    image: student-oj-problem-service:${STUDENTOJ_IMAGE_TAG:-0.1.0}
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-      args:
-        SERVICE_NAME: problem-service
-    environment:
-      <<: *backend-env
-      SANDBOX_BASE_URL: http://sandbox-service:8084
-    depends_on:
-      mysql:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-      sandbox-service:
-        condition: service_started
-    ports:
-      - "8082:8082"
-
-  judge-service:
-    image: student-oj-judge-service:${STUDENTOJ_IMAGE_TAG:-0.1.0}
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-      args:
-        SERVICE_NAME: judge-service
-    environment:
-      <<: *backend-env
-      SANDBOX_BASE_URL: http://sandbox-service:8084
-    depends_on:
-      mysql:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-      sandbox-service:
-        condition: service_started
-    ports:
-      - "8083:8083"
-
-  sandbox-service:
-    image: student-oj-sandbox-service:${STUDENTOJ_IMAGE_TAG:-0.1.0}
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-      args:
-        SERVICE_NAME: sandbox-service
-    environment:
-      <<: *backend-env
       SANDBOX_MYSQL_DATABASE: student_oj_sandbox
       SANDBOX_MYSQL_USERNAME: sandbox
       SANDBOX_MYSQL_PASSWORD: sandbox123
-    depends_on:
-      mysql:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    ports:
-      - "8084:8084"
-
-  ai-service:
-    image: student-oj-ai-service:${STUDENTOJ_IMAGE_TAG:-0.1.0}
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-      args:
-        SERVICE_NAME: ai-service
-    environment:
-      <<: *backend-env
+      STUDENTOJ_AUTH_INTERNAL_SECRET: student-oj-internal-v1
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
       DEEPSEEK_BASE_URL: ${DEEPSEEK_BASE_URL:-https://api.deepseek.com}
       DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-deepseek-chat}
       STUDENTOJ_AI_MODE: ${STUDENTOJ_AI_MODE:-auto}
-    depends_on:
-      mysql:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    ports:
-      - "8085:8085"
-
-  statistics-service:
-    image: student-oj-statistics-service:${STUDENTOJ_IMAGE_TAG:-0.1.0}
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-      args:
-        SERVICE_NAME: statistics-service
-    environment:
-      <<: *backend-env
-    depends_on:
-      mysql:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    ports:
-      - "8086:8086"
-
-  teacher-service:
-    image: student-oj-teacher-service:${STUDENTOJ_IMAGE_TAG:-0.1.0}
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-      args:
-        SERVICE_NAME: teacher-service
-    environment:
-      <<: *backend-env
-    depends_on:
-      mysql:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
-    ports:
-      - "8087:8087"
-
-  leetcode-crawler:
-    image: student-oj-leetcode-crawler:${STUDENTOJ_IMAGE_TAG:-0.1.0}
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-      args:
-        SERVICE_NAME: leetcode-crawler
-    environment:
-      <<: *backend-env
       LEETCODE_CRAWLER_ENABLED: ${LEETCODE_CRAWLER_ENABLED:-true}
       LEETCODE_GRAPHQL_URL: ${LEETCODE_GRAPHQL_URL:-https://leetcode.cn/graphql}
       LEETCODE_BASE_URL: ${LEETCODE_BASE_URL:-https://leetcode.cn}
@@ -201,8 +58,14 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    ports:
-      - "8088:8088"
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/8080' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 40s
 
   web:
     image: student-oj-web:${STUDENTOJ_IMAGE_TAG:-0.1.0}
@@ -210,42 +73,12 @@ services:
       context: .
       dockerfile: Dockerfile
     depends_on:
-      - auth-service
-      - problem-service
-      - judge-service
-      - sandbox-service
-      - ai-service
-      - statistics-service
-      - teacher-service
+      app:
+        condition: service_healthy
     ports:
       - "80:80"
-
-  cloudflared:
-    image: cloudflare/cloudflared:latest
-    restart: unless-stopped
-    command: tunnel --no-autoupdate --url http://web:80
-    depends_on:
-      - web
-
-  prometheus:
-    image: prom/prometheus:v2.54.1
-    volumes:
-      - ./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    ports:
-      - "9090:9090"
-
-  grafana:
-    image: grafana/grafana:11.2.2
     environment:
-      GF_SECURITY_ADMIN_USER: admin
-      GF_SECURITY_ADMIN_PASSWORD: admin
-    volumes:
-      - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
-      - ./deploy/grafana/dashboards:/var/lib/grafana/dashboards:ro
-    ports:
-      - "3000:3000"
-    depends_on:
-      - prometheus
+      TZ: Asia/Shanghai
 
 volumes:
   mysql-data:

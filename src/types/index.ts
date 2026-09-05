@@ -30,7 +30,7 @@ export interface Submission {
   problemTitle: string
   userId: number
   userName: string
-  status: 'ACCEPTED' | 'WRONG_ANSWER' | 'TIME_LIMIT' | 'RUNTIME_ERROR' | 'WA' | 'TLE' | 'RE' | 'PENDING'
+  status: 'ACCEPTED' | 'WRONG_ANSWER' | 'TIME_LIMIT' | 'TIME_LIMIT_EXCEEDED' | 'RESULT_LIMIT_EXCEEDED' | 'SYSTEM_BUSY' | 'RUNTIME_ERROR' | 'WA' | 'TLE' | 'RE' | 'PENDING'
   score: number
   runtimeMs: number
   submittedAt: string

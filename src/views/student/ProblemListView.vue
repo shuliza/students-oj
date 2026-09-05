@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { EditPen, View } from '@element-plus/icons-vue'
 import StatusTag from '@/components/ui/StatusTag.vue'
@@ -40,6 +40,14 @@ const filtered = computed(() => {
 const paged = computed(() => {
   const start = (page.value - 1) * pageSize
   return filtered.value.slice(start, start + pageSize)
+})
+
+watch([keyword, difficulty, tag, status, sort], () => {
+  page.value = 1
+})
+
+watch(() => filtered.value.length, (total) => {
+  page.value = Math.min(page.value, Math.max(1, Math.ceil(total / pageSize)))
 })
 
 const difficultyLabel = (value: string) =>

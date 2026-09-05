@@ -10,6 +10,7 @@ import ChartBox from '@/components/ui/ChartBox.vue'
 import EmptyState from '@/components/ui/EmptyState.vue'
 import { useProblemStore } from '@/stores/problem'
 import { useStatisticsStore } from '@/stores/statistics'
+import { recentActivity } from '@/utils/activity'
 
 const router = useRouter()
 const problemStore = useProblemStore()
@@ -26,7 +27,7 @@ const recentSubmissions = computed(() => problemStore.submissions.slice(0, 8))
 
 // 近 14 天提交趋势（来自活跃数据）
 const trendOption = computed(() => {
-  const days = statisticsStore.activity.slice(-14)
+  const days = recentActivity(statisticsStore.activity, 14)
   return {
     grid: { left: 8, right: 12, top: 24, bottom: 24, containLabel: true },
     tooltip: { trigger: 'axis' },

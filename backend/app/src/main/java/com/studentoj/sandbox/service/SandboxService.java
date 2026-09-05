@@ -11,6 +11,7 @@ import java.sql.SQLTimeoutException;
 import java.sql.Statement;
 import java.util.LinkedHashSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,6 @@ import java.util.regex.Pattern;
 import javax.sql.DataSource;
 import jakarta.annotation.PostConstruct;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.statement.StatementVisitorAdapter;
 import net.sf.jsqlparser.statement.select.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +34,8 @@ public class SandboxService {
 
     private static final Logger log = LoggerFactory.getLogger(SandboxService.class);
 
-    private static final Pattern DANGEROUS = Pattern.compile(
-            "\\b(drop|delete|truncate|alter|grant|revoke|shutdown|create\\s+database|create\\s+user|set\\s+password|load\\s+data|outfile|load_file|sleep\\s*\\(|benchmark\\s*\\()\\b",
+    private static final Pattern DANGEROUS_SELECT = Pattern.compile(
+            "\\b(load_file|sleep|benchmark)\\s*\\(|\\binto\\s+(out|dump)file\\b",
             Pattern.CASE_INSENSITIVE);
 
     private final DataSource dataSource;
@@ -110,12 +110,17 @@ public class SandboxService {
                 QueryResult expectedResult = runQuery(runConnection, request.answerSql());
                 int runtime = Math.toIntExact(Math.min(Integer.MAX_VALUE, System.currentTimeMillis() - started));
 
-                boolean match = compare(studentResult, expectedResult);
+                if (studentResult.truncated() || expectedResult.truncated()) {
+                    return response("RESULT_LIMIT_EXCEEDED", runtime,
+                            "Result exceeds the maximum of " + maxRows + " rows.", false, studentResult);
+                }
+
+                boolean orderSensitive = hasOrderBy(request.answerSql());
+                boolean match = compare(studentResult, expectedResult, orderSensitive);
                 if (match) {
                     return response("ACCEPTED", runtime, "Accepted.", true, studentResult);
                 }
-                String message = "Wrong answer. Your result has " + studentResult.rows().size()
-                        + " row(s), expected " + expectedResult.rows().size() + " row(s).";
+                String message = describeMismatch(studentResult, expectedResult);
                 return response("WRONG_ANSWER", runtime, message, false, studentResult);
             } finally {
                 dropDatabaseQuietly(admin, databaseName);
@@ -133,22 +138,17 @@ public class SandboxService {
     }
 
     private String validateStudentSql(String sql) {
-        if (DANGEROUS.matcher(sql).find()) {
-            return "Dangerous SQL keyword detected.";
-        }
         try {
             var statements = CCJSqlParserUtil.parseStatements(sql).getStatements();
             if (statements.size() != 1) {
                 return "Only one SQL statement is allowed.";
             }
-            final boolean[] select = {false};
-            statements.get(0).accept(new StatementVisitorAdapter() {
-                @Override
-                public void visit(Select statement) {
-                    select[0] = true;
-                }
-            });
-            return select[0] ? null : "Only SELECT/WITH queries are allowed.";
+            if (!(statements.get(0) instanceof Select)) {
+                return "Only SELECT/WITH queries are allowed.";
+            }
+            return DANGEROUS_SELECT.matcher(stripSqlLiteralsAndComments(sql)).find()
+                    ? "Dangerous SQL function or output clause detected."
+                    : null;
         } catch (Exception e) {
             return "SQL parse failed: " + e.getMessage();
         }
@@ -237,7 +237,7 @@ public class SandboxService {
     private QueryResult runQuery(Connection conn, String sql) throws SQLException {
         try (Statement statement = conn.createStatement()) {
             statement.setQueryTimeout(queryTimeoutSeconds);
-            statement.setMaxRows(maxRows);
+            statement.setMaxRows(maxRows == Integer.MAX_VALUE ? maxRows : maxRows + 1);
             try (ResultSet rs = statement.executeQuery(trimTrailingSemicolon(sql))) {
                 ResultSetMetaData meta = rs.getMetaData();
                 int count = meta.getColumnCount();
@@ -248,31 +248,153 @@ public class SandboxService {
                 }
 
                 List<Map<String, Object>> rows = new ArrayList<>();
+                List<List<Object>> valueRows = new ArrayList<>();
                 while (rs.next()) {
                     Map<String, Object> row = new LinkedHashMap<>();
+                    List<Object> values = new ArrayList<>(count);
                     for (int i = 1; i <= count; i++) {
-                        row.put(columns.get(i - 1), normalizeValue(rs.getObject(i)));
+                        Object value = normalizeValue(rs.getObject(i));
+                        values.add(value);
+                        row.put(uniqueColumnName(columns.get(i - 1), i, row), value);
                     }
                     rows.add(row);
+                    valueRows.add(values);
                 }
-                return new QueryResult(columns, rows);
+                boolean truncated = rows.size() > maxRows;
+                if (truncated) {
+                    rows = new ArrayList<>(rows.subList(0, maxRows));
+                    valueRows = new ArrayList<>(valueRows.subList(0, maxRows));
+                }
+                return new QueryResult(columns, rows, valueRows, truncated);
             }
         }
     }
 
-    private boolean compare(QueryResult actual, QueryResult expected) {
-        if (!actual.columns().equals(expected.columns())) {
+    private String uniqueColumnName(String label, int position, Map<String, Object> row) {
+        if (!row.containsKey(label)) {
+            return label;
+        }
+        String candidate = label + " (" + position + ")";
+        while (row.containsKey(candidate)) {
+            candidate += "_";
+        }
+        return candidate;
+    }
+
+    /**
+     * 判题以「测试用例结果集是否一致」为准，不要求与参考答案的列别名完全相同：
+     * 仅比较列数与单元格取值。当参考答案带 ORDER BY 时行序敏感（按序逐行比较），
+     * 否则按多重集合（行内容计数）比较，允许学生 SQL 返回不同的行序。
+     */
+    private boolean compare(QueryResult actual, QueryResult expected, boolean orderSensitive) {
+        if (actual.truncated() || expected.truncated()) {
+            return false;
+        }
+        if (actual.columns().size() != expected.columns().size()) {
             return false;
         }
         if (actual.rows().size() != expected.rows().size()) {
             return false;
         }
-        for (int i = 0; i < actual.rows().size(); i++) {
-            if (!actual.rows().get(i).equals(expected.rows().get(i))) {
-                return false;
-            }
+        List<List<Object>> actualRows = actual.valueRows();
+        List<List<Object>> expectedRows = expected.valueRows();
+        if (orderSensitive) {
+            return actualRows.equals(expectedRows);
         }
-        return true;
+        return asMultiset(actualRows).equals(asMultiset(expectedRows));
+    }
+
+    private Map<List<Object>, Integer> asMultiset(List<List<Object>> rows) {
+        Map<List<Object>, Integer> counts = new HashMap<>();
+        for (List<Object> row : rows) {
+            counts.merge(row, 1, Integer::sum);
+        }
+        return counts;
+    }
+
+    private boolean hasOrderBy(String sql) {
+        if (isBlank(sql)) {
+            return false;
+        }
+        try {
+            net.sf.jsqlparser.statement.Statement statement = CCJSqlParserUtil.parse(trimTrailingSemicolon(sql));
+            return statement instanceof Select select
+                    && select.getOrderByElements() != null
+                    && !select.getOrderByElements().isEmpty();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private String stripSqlLiteralsAndComments(String sql) {
+        StringBuilder normalized = new StringBuilder(sql.length());
+        boolean single = false;
+        boolean doubleQuoted = false;
+        boolean backtick = false;
+        boolean lineComment = false;
+        boolean blockComment = false;
+        for (int i = 0; i < sql.length(); i++) {
+            char ch = sql.charAt(i);
+            char next = i + 1 < sql.length() ? sql.charAt(i + 1) : '\0';
+            if (lineComment) {
+                if (ch == '\n' || ch == '\r') {
+                    lineComment = false;
+                    normalized.append(' ');
+                }
+                continue;
+            }
+            if (blockComment) {
+                if (ch == '*' && next == '/') {
+                    blockComment = false;
+                    i++;
+                }
+                continue;
+            }
+            if (!single && !doubleQuoted && !backtick && ch == '-' && next == '-') {
+                lineComment = true;
+                i++;
+                continue;
+            }
+            if (!single && !doubleQuoted && !backtick && ch == '#') {
+                lineComment = true;
+                continue;
+            }
+            if (!single && !doubleQuoted && !backtick && ch == '/' && next == '*') {
+                blockComment = true;
+                i++;
+                continue;
+            }
+            if (!doubleQuoted && !backtick && ch == '\'') {
+                if (single && next == '\'') {
+                    i++;
+                } else {
+                    single = !single;
+                }
+                normalized.append(' ');
+                continue;
+            }
+            if (!single && !backtick && ch == '"') {
+                doubleQuoted = !doubleQuoted;
+                normalized.append(' ');
+                continue;
+            }
+            if (!single && !doubleQuoted && ch == '`') {
+                backtick = !backtick;
+                normalized.append(' ');
+                continue;
+            }
+            normalized.append(single || doubleQuoted || backtick ? ' ' : ch);
+        }
+        return normalized.toString();
+    }
+
+    private String describeMismatch(QueryResult actual, QueryResult expected) {
+        if (actual.columns().size() != expected.columns().size()) {
+            return "Wrong answer. Your result has " + actual.columns().size()
+                    + " column(s), expected " + expected.columns().size() + " column(s).";
+        }
+        return "Wrong answer. Your result has " + actual.rows().size()
+                + " row(s), expected " + expected.rows().size() + " row(s).";
     }
 
     private Object normalizeValue(Object value) {
@@ -328,6 +450,7 @@ public class SandboxService {
         return value == null || value.trim().isEmpty();
     }
 
-    private record QueryResult(List<String> columns, List<Map<String, Object>> rows) {
+    private record QueryResult(List<String> columns, List<Map<String, Object>> rows,
+                               List<List<Object>> valueRows, boolean truncated) {
     }
 }

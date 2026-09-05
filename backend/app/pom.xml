@@ -11,8 +11,8 @@
   <artifactId>app</artifactId>
 
   <description>
-    Student OJ 单体应用：整合 auth / problem / judge / sandbox / ai / statistics / teacher /
-    leetcode-crawler 全部模块，跨模块通信改为进程内直接调用。
+    Student OJ 单体应用：包含 auth / problem / judge / sandbox / ai / statistics / teacher /
+    leetcodecrawler 全部业务模块，模块间通信为进程内直接调用。
   </description>
 
   <dependencies>
@@ -69,7 +69,7 @@
       <version>4.9</version>
     </dependency>
 
-    <!-- HTML 解析与重试：leetcode-crawler -->
+    <!-- HTML 解析与重试：leetcodecrawler -->
     <dependency>
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
@@ -84,7 +84,7 @@
       <artifactId>spring-aspects</artifactId>
     </dependency>
 
-    <!-- Lombok：leetcode-crawler -->
+    <!-- Lombok：leetcodecrawler -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>

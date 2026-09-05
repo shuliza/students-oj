@@ -11,6 +11,7 @@ import { statisticsApi, submissionApi, teacherApi } from '@/api'
 import { useProblemStore } from '@/stores/problem'
 import { useStatisticsStore } from '@/stores/statistics'
 import type { ClassGroup, StudentTodaySolved, User } from '@/types'
+import { recentActivity } from '@/utils/activity'
 
 const problemStore = useProblemStore()
 const statisticsStore = useStatisticsStore()
@@ -69,7 +70,7 @@ const difficultyOption = computed(() => {
 
 // 近 14 天提交趋势（柱图）
 const submissionTrendOption = computed(() => {
-  const days = statisticsStore.activity.slice(-14)
+  const days = recentActivity(statisticsStore.activity, 14)
   return {
     grid: { left: 8, right: 12, top: 24, bottom: 24, containLabel: true },
     tooltip: { trigger: 'axis' },

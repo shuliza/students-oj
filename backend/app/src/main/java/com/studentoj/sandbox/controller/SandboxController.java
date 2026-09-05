@@ -25,6 +25,6 @@ public class SandboxController {
 
     @GetMapping("/health")
     public String health() {
-        return "sandbox-service ok";
+        return "sandbox ok";
     }
 }

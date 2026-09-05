@@ -1,6 +1,7 @@
 package com.studentoj.problem.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.studentoj.common.web.HtmlSanitizer;
 import com.studentoj.problem.dto.ProblemAdminResponse;
 import com.studentoj.problem.dto.ProblemSaveRequest;
 import com.studentoj.problem.entity.ProblemEntity;
@@ -114,7 +115,7 @@ public class ProblemAdminService {
         entity.setDifficulty(normalizeDifficulty(request.difficulty()));
         entity.setTags(request.tags() == null ? "" : String.join(",", request.tags().stream()
                 .filter(t -> t != null && !t.isBlank()).map(String::trim).toList()));
-        entity.setDescription(request.description() == null ? "" : request.description());
+        entity.setDescription(HtmlSanitizer.cleanDescription(request.description()));
         entity.setSampleInput(request.sampleInput() == null ? "" : request.sampleInput());
         entity.setSampleOutput(request.sampleOutput() == null ? "" : request.sampleOutput());
         entity.setAnswerSql(request.answerSql().trim());
@@ -186,7 +187,7 @@ public class ProblemAdminService {
                 entity.getTitle(),
                 entity.getDifficulty(),
                 splitTags(entity.getTags()),
-                entity.getDescription(),
+                HtmlSanitizer.cleanDescription(entity.getDescription()),
                 entity.getSampleInput(),
                 entity.getSampleOutput(),
                 entity.getAnswerSql(),

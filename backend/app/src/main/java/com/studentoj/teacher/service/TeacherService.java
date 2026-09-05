@@ -1,5 +1,6 @@
 package com.studentoj.teacher.service;
 
+import com.studentoj.auth.service.TokenStore;
 import com.studentoj.teacher.dto.ClassGroupResponse;
 import com.studentoj.teacher.dto.ExportRequest;
 import com.studentoj.teacher.dto.GroupRequest;
@@ -34,9 +35,11 @@ public class TeacherService {
     private static final Logger log = LoggerFactory.getLogger(TeacherService.class);
 
     private final TeacherMapper teacherMapper;
+    private final TokenStore tokenStore;
 
-    public TeacherService(TeacherMapper teacherMapper) {
+    public TeacherService(TeacherMapper teacherMapper, TokenStore tokenStore) {
         this.teacherMapper = teacherMapper;
+        this.tokenStore = tokenStore;
     }
 
     public List<StudentResponse> students() {
@@ -116,6 +119,9 @@ public class TeacherService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "状态值非法");
         }
         teacherMapper.updateStudentStatus(id, normalized);
+        if ("DISABLED".equals(normalized)) {
+            tokenStore.revokeUser(id);
+        }
     }
 
     public void resetStudentPassword(Long id, String newPassword) {
@@ -127,6 +133,7 @@ public class TeacherService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "密码长度至少 6 位");
         }
         teacherMapper.updateStudentPassword(id, new BCryptPasswordEncoder().encode(pwd));
+        tokenStore.revokeUser(id);
     }
 
     // ===== 教师账号管理 =====
@@ -178,6 +185,9 @@ public class TeacherService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "状态值非法");
         }
         teacherMapper.updateTeacherStatus(id, normalized);
+        if ("DISABLED".equals(normalized)) {
+            tokenStore.revokeUser(id);
+        }
     }
 
     public void resetTeacherPassword(Long id, String newPassword) {
@@ -189,6 +199,7 @@ public class TeacherService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "密码长度至少 6 位");
         }
         teacherMapper.updateTeacherPassword(id, new BCryptPasswordEncoder().encode(pwd));
+        tokenStore.revokeUser(id);
     }
 
     private TeacherAccountResponse toTeacher(Map<String, Object> row) {

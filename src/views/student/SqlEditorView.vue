@@ -33,7 +33,35 @@ const router = useRouter()
 const problemStore = useProblemStore()
 const problem = ref<Problem | null>(null)
 const DEFAULT_SQL = 'SELECT s.name, c.course, c.score\nFROM student s\nJOIN score c ON s.id = c.student_id\nWHERE c.score >= 80;'
+const DRAFT_PREFIX = 'sql-draft:'
 const sql = ref(DEFAULT_SQL)
+// 标记“正在程序化加载题目”，期间 sql 变化不触发草稿自动保存，避免切题瞬间用默认值覆盖草稿。
+let restoringDraft = false
+
+function draftKey(problemId: number) {
+  return `${DRAFT_PREFIX}${problemId}`
+}
+function loadDraft(problemId: number): string | null {
+  try {
+    return localStorage.getItem(draftKey(problemId))
+  } catch {
+    return null
+  }
+}
+function saveDraft(problemId: number, value: string) {
+  try {
+    localStorage.setItem(draftKey(problemId), value)
+  } catch {
+    // localStorage 不可用时静默降级，不影响编辑。
+  }
+}
+function clearDraft(problemId: number) {
+  try {
+    localStorage.removeItem(draftKey(problemId))
+  } catch {
+    // 忽略
+  }
+}
 const result = ref<Submission | null>(null)
 const suggestion = ref('')
 const judging = ref(false)
@@ -78,11 +106,15 @@ const submit = async () => {
   if (!problem.value) return
   judging.value = true
   suggestion.value = ''
+  runResult.value = null
   activeBottomTab.value = 'result'
   try {
     result.value = await problemApi.submit(problem.value.id, sql.value)
-    ElNotification.info({ title: '判题中', message: '提交已进入队列，正在等待结果。' })
-    result.value = await pollSubmission(result.value.id)
+    if (result.value.status === 'PENDING') {
+      ElNotification.info({ title: '判题中', message: '提交已进入队列，正在等待结果。' })
+      result.value = await pollSubmission(result.value.id)
+    }
+    await loadMySubmissions()
     ElMessage.success('判题完成')
   } finally {
     judging.value = false
@@ -109,7 +141,10 @@ const requestAiSuggestion = async () => {
 }
 
 const pollSubmission = async (submissionId: number) => {
-  const terminalStatuses = ['ACCEPTED', 'WRONG_ANSWER', 'TIME_LIMIT', 'RUNTIME_ERROR', 'WA', 'TLE', 'RE']
+  const terminalStatuses = [
+    'ACCEPTED', 'WRONG_ANSWER', 'TIME_LIMIT', 'TIME_LIMIT_EXCEEDED',
+    'RESULT_LIMIT_EXCEEDED', 'SYSTEM_BUSY', 'RUNTIME_ERROR', 'WA', 'TLE', 'RE'
+  ]
   for (let index = 0; index < 20; index += 1) {
     const latest = await submissionApi.get(submissionId)
     if (terminalStatuses.includes(latest.status)) {
@@ -121,28 +156,17 @@ const pollSubmission = async (submissionId: number) => {
 }
 
 const formatSql = () => {
-  const keywords = [
-    'select',
-    'from',
-    'where',
-    'join',
-    'left join',
-    'right join',
-    'inner join',
-    'group by',
-    'order by',
-    'having',
-    'limit',
-    'rank',
-    'over',
-    'partition by'
-  ]
-  let value = sql.value.trim()
-  keywords.forEach((keyword) => {
-    const pattern = new RegExp(`\\b${keyword}\\b`, 'gi')
-    value = value.replace(pattern, keyword.toUpperCase())
-  })
-  sql.value = value
+  const formatted = formatSqlText(sql.value)
+  if (!formatted) {
+    ElMessage.warning('请先编写 SQL')
+    return
+  }
+  if (formatted === sql.value) {
+    ElMessage.info('SQL 已是规范格式')
+    return
+  }
+  sql.value = formatted
+  ElMessage.success('已格式化 SQL')
 }
 
 const runOnly = async () => {
@@ -151,6 +175,9 @@ const runOnly = async () => {
     return
   }
   running.value = true
+  result.value = null
+  runResult.value = null
+  suggestion.value = ''
   activeBottomTab.value = 'result'
   try {
     runResult.value = await problemApi.run(problem.value.id, sql.value)
@@ -171,6 +198,9 @@ const runOnly = async () => {
 const resetSql = () => {
   sql.value = DEFAULT_SQL
   runResult.value = null
+  if (problem.value) {
+    clearDraft(problem.value.id)
+  }
   ElMessage.info('已重置为初始 SQL')
 }
 
@@ -195,7 +225,6 @@ const switchProblem = (target: Problem | null) => {
 }
 
 const resetProblemState = () => {
-  sql.value = DEFAULT_SQL
   result.value = null
   suggestion.value = ''
   runResult.value = null
@@ -206,22 +235,86 @@ const resetProblemState = () => {
 }
 
 const loadProblem = async (id: number) => {
+  // 切题前先把当前题目的编辑内容存为草稿，避免离开后丢失。
+  if (problem.value && !restoringDraft) {
+    saveDraft(problem.value.id, sql.value)
+  }
   loadingProblem.value = true
+  restoringDraft = true
   resetProblemState()
+  // 恢复目标题目的草稿；没有草稿则用默认模板。
+  sql.value = loadDraft(id) ?? DEFAULT_SQL
   try {
     problem.value = await problemApi.detail(id)
     await Promise.all([loadMySubmissions(), loadAiHistory()])
   } finally {
     loadingProblem.value = false
+    restoringDraft = false
   }
 }
 
 function parseSchema(input: string): SchemaTable[] {
-  const matches = input.matchAll(/([\w\u4e00-\u9fa5]+)\(([^)]*)\)/g)
+  const matches = input.matchAll(/([\w一-龥]+)\(([^)]*)\)/g)
   return Array.from(matches, (match) => ({
     name: match[1],
     columns: match[2].split(',').map((item) => item.trim()).filter(Boolean)
   }))
+}
+
+const SQL_KEYWORDS = [
+  'SELECT', 'FROM', 'WHERE', 'GROUP BY', 'ORDER BY', 'HAVING', 'LIMIT', 'OFFSET',
+  'LEFT JOIN', 'RIGHT JOIN', 'INNER JOIN', 'FULL JOIN', 'CROSS JOIN', 'JOIN',
+  'ON', 'AND', 'OR', 'UNION ALL', 'UNION', 'INSERT INTO', 'VALUES', 'UPDATE',
+  'SET', 'DELETE', 'AS', 'IN', 'NOT', 'LIKE', 'BETWEEN', 'IS NULL', 'IS NOT NULL',
+  'DISTINCT', 'COUNT', 'SUM', 'AVG', 'MAX', 'MIN', 'CASE', 'WHEN', 'THEN', 'ELSE',
+  'END', 'OVER', 'PARTITION BY', 'WITH', 'DESC', 'ASC'
+]
+// 子句关键字：另起一行（JOIN 单独用组合正则处理，避免 LEFT JOIN 被二次拆分）。
+const NEWLINE_KEYWORDS = ['FROM', 'WHERE', 'GROUP BY', 'ORDER BY', 'HAVING', 'LIMIT',
+  'UNION ALL', 'UNION']
+
+function formatSqlText(raw: string): string {
+  if (!raw || !raw.trim()) return ''
+  // 1. 提取并占位字符串字面量，避免内部内容被改写。
+  const literals: string[] = []
+  let work = raw.replace(/'(?:[^'\\]|\\.|'')*'/g, (m) => {
+    literals.push(m)
+    return `@@LIT${literals.length - 1}@@`
+  })
+  // 2. 压缩空白。
+  work = work.replace(/\s+/g, ' ').trim().replace(/\s*([,();])\s*/g, '$1 ').trim()
+  // 3. 关键字统一大写（按长度降序，先匹配多词关键字）。
+  ;[...SQL_KEYWORDS].sort((a, b) => b.length - a.length).forEach((kw) => {
+    const pattern = new RegExp(`\\b${kw.replace(/ /g, '\\s+')}\\b`, 'gi')
+    work = work.replace(pattern, kw)
+  })
+  // 4. 子句关键字前换行。
+  NEWLINE_KEYWORDS.sort((a, b) => b.length - a.length).forEach((kw) => {
+    const pattern = new RegExp(`\\s*\\b${kw.replace(/ /g, '\\s+')}\\b`, 'g')
+    work = work.replace(pattern, `\n${kw}`)
+  })
+  // 4b. JOIN（含 LEFT/RIGHT/INNER/FULL/CROSS [OUTER]）整体前换行。
+  work = work.replace(/\s*\b((?:LEFT|RIGHT|INNER|FULL|CROSS)(?:\s+OUTER)?\s+)?JOIN\b/g,
+    (_, prefix) => `\n${(prefix || '').trim()}${prefix ? ' ' : ''}JOIN`)
+  // 5. SELECT 字段、AND/OR 缩进换行。
+  work = work.replace(/\bSELECT\b\s*/g, 'SELECT\n  ')
+  work = work.replace(/\s*,\s*/g, ',\n  ')
+  work = work.replace(/\s*\b(AND|OR)\b\s*/g, '\n  $1 ')
+  // 6. 行内整理（保留行首缩进）+ 结尾分号。
+  let result = work
+    .split('\n')
+    .map((line) => {
+      const indent = line.match(/^\s*/)?.[0] ?? ''
+      const body = line.slice(indent.length).replace(/\s+/g, ' ').replace(/\s*;\s*$/, '').trimEnd()
+      return indent + body
+    })
+    .filter((line, idx, arr) => line.trim() !== '' || idx === arr.length - 1)
+    .join('\n')
+    .trim()
+  if (!result.endsWith(';')) result += ';'
+  // 7. 还原字符串字面量。
+  result = result.replace(/@@LIT(\d+)@@/g, (_, i) => literals[Number(i)])
+  return result
 }
 
 function normalizeCaseText(value: string) {
@@ -290,6 +383,13 @@ watch(
     }
   }
 )
+
+// 编辑内容变化时自动保存为当前题目的草稿（加载/恢复阶段除外）。
+watch(sql, (value) => {
+  if (!restoringDraft && problem.value) {
+    saveDraft(problem.value.id, value)
+  }
+})
 </script>
 
 <template>
@@ -358,7 +458,6 @@ watch(
                 <p v-else>{{ block.text }}</p>
               </template>
             </div>
-            <p class="return-note">以任意顺序返回结果表。</p>
 
             <section class="schema-section">
               <h2>SQL Schema</h2>
@@ -733,8 +832,7 @@ watch(
   background: rgba(239, 68, 68, 0.14);
 }
 
-.description,
-.return-note {
+.description {
   color: #e5edf7;
   font-size: 15px;
   line-height: 1.8;

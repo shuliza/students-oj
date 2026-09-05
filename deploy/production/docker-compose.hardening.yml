@@ -1,0 +1,18 @@
+services:
+  mysql:
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+  redis:
+    restart: unless-stopped
+    ports: !reset []
+  app:
+    restart: unless-stopped
+    ports: !reset []
+    environment:
+      TZ: Asia/Shanghai
+      JAVA_TOOL_OPTIONS: -Duser.timezone=Asia/Shanghai
+  web:
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai

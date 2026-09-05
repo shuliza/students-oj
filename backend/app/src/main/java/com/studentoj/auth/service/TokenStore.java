@@ -30,7 +30,7 @@ public class TokenStore {
     private final ConcurrentHashMap<Long, UserTokenEntry> userTokens = new ConcurrentHashMap<>();
 
     public TokenStore(@Autowired(required = false) StringRedisTemplate redis,
-                      @Value("${auth.token.ttl-seconds:86400}") long ttlSeconds) {
+                      @Value("${studentoj.auth.token.ttl-seconds:86400}") long ttlSeconds) {
         this.redis = redis;
         this.ttlSeconds = ttlSeconds;
     }
@@ -130,6 +130,24 @@ public class TokenStore {
             if (user != null) {
                 userTokens.computeIfPresent(user.userId(),
                         (ignored, current) -> token.equals(current.token()) ? null : current);
+            }
+        }
+    }
+
+    public void revokeUser(Long userId) {
+        if (userId == null || userId <= 0) {
+            return;
+        }
+        if (redis != null) {
+            String currentToken = redis.opsForValue().get(userTokenKey(userId));
+            if (currentToken != null) {
+                redis.delete(KEY_PREFIX + currentToken);
+            }
+            redis.delete(userTokenKey(userId));
+        } else {
+            UserTokenEntry current = userTokens.remove(userId);
+            if (current != null) {
+                memory.remove(current.token());
             }
         }
     }

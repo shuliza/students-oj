@@ -29,7 +29,9 @@ public class StatisticsService {
         int todaySolved = safeCount(() -> statisticsMapper.countTodaySolved());
         int todayAttempted = safeCount(() -> statisticsMapper.countTodayAttempted());
         int todayPassed = safeCount(() -> statisticsMapper.countTodayPassed());
-        return new OverviewResponse(students, problems, subs, passRate, days, todaySolved, todayAttempted, todayPassed);
+        int todaySubmissions = safeCount(() -> statisticsMapper.countTodaySubmissions());
+        return new OverviewResponse(students, problems, subs, passRate, days, todaySolved, todayAttempted, todayPassed,
+                todaySubmissions, accepted, currentStreak(activity()));
     }
 
     public OverviewResponse teacherOverview(String groupName, Long studentId) {
@@ -41,7 +43,10 @@ public class StatisticsService {
             int todaySolved = safeCount(() -> statisticsMapper.countTodaySolvedByUser(studentId));
             int todayAttempted = safeCount(() -> statisticsMapper.countTodayAttemptedByUser(studentId));
             int todayPassed = safeCount(() -> statisticsMapper.countTodayPassedByUser(studentId));
-            return new OverviewResponse(1, safeCount(statisticsMapper::countProblems), subs, passRate, days, todaySolved, todayAttempted, todayPassed);
+            int todaySubmissions = safeCount(() -> statisticsMapper.countTodaySubmissionsByUser(studentId));
+            int solved = safeCount(() -> statisticsMapper.countSolvedByUser(studentId));
+            return new OverviewResponse(1, safeCount(statisticsMapper::countProblems), subs, passRate, days, todaySolved,
+                    todayAttempted, todayPassed, todaySubmissions, solved, currentStreak(activityForUser(studentId)));
         }
         if (groupName != null && !groupName.isBlank()) {
             String normalizedGroupName = groupName.trim();
@@ -53,7 +58,10 @@ public class StatisticsService {
             int todaySolved = safeCount(() -> statisticsMapper.countTodaySolvedByGroupName(normalizedGroupName));
             int todayAttempted = safeCount(() -> statisticsMapper.countTodayAttemptedByGroupName(normalizedGroupName));
             int todayPassed = safeCount(() -> statisticsMapper.countTodayPassedByGroupName(normalizedGroupName));
-            return new OverviewResponse(students, safeCount(statisticsMapper::countProblems), subs, passRate, days, todaySolved, todayAttempted, todayPassed);
+            int todaySubmissions = safeCount(() -> statisticsMapper.countTodaySubmissionsByGroupName(normalizedGroupName));
+            return new OverviewResponse(students, safeCount(statisticsMapper::countProblems), subs, passRate, days,
+                    todaySolved, todayAttempted, todayPassed, todaySubmissions, accepted,
+                    currentStreak(teacherActivity(normalizedGroupName, null)));
         }
         return overview();
     }
@@ -70,7 +78,9 @@ public class StatisticsService {
         int todaySolved = safeCount(() -> statisticsMapper.countTodaySolvedByUser(userId));
         int todayAttempted = safeCount(() -> statisticsMapper.countTodayAttemptedByUser(userId));
         int todayPassed = safeCount(() -> statisticsMapper.countTodayPassedByUser(userId));
-        return new OverviewResponse(solved, safeCount(statisticsMapper::countProblems), subs, passRate, days, todaySolved, todayAttempted, todayPassed);
+        int todaySubmissions = safeCount(() -> statisticsMapper.countTodaySubmissionsByUser(userId));
+        return new OverviewResponse(0, safeCount(statisticsMapper::countProblems), subs, passRate, days, todaySolved,
+                todayAttempted, todayPassed, todaySubmissions, solved, currentStreak(activityForUser(userId)));
     }
 
     public List<ActivityResponse> activity() {
@@ -156,5 +166,19 @@ public class StatisticsService {
         } catch (Exception e) {
             return 0;
         }
+    }
+
+    private int currentStreak(List<ActivityResponse> activity) {
+        java.util.Set<LocalDate> activeDates = activity.stream()
+                .filter(item -> item.count() != null && item.count() > 0)
+                .map(ActivityResponse::date)
+                .collect(java.util.stream.Collectors.toSet());
+        int streak = 0;
+        LocalDate cursor = LocalDate.now();
+        while (activeDates.contains(cursor)) {
+            streak++;
+            cursor = cursor.minusDays(1);
+        }
+        return streak;
     }
 }

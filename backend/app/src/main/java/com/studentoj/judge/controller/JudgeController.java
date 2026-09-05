@@ -36,6 +36,6 @@ public class JudgeController {
 
     @GetMapping("/health")
     public String health() {
-        return "judge-service ok";
+        return "judge ok";
     }
 }
